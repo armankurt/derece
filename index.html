@@ -1,0 +1,2336 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Derece — Eğitim Platformu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* ============ TOKENS — açık tema varsayılan (ChatGPT × Apple) ============ */
+:root{
+  --bg:#FAFAFB; --surface:#FFFFFF; --surface2:#FCFCFD; --sunken:#F1F1F3; --side:#F7F7F8;
+  --ink:#0D0D0F; --ink2:#5D5D63; --ink3:#9A9AA1;
+  --line:#E3E3E7; --hairline:#EAEAEE;
+  --accent:#0A63E9; --accent-hover:#0956CC; --on-accent:#FFFFFF;
+  --accent-soft:rgba(10,99,233,.08); --accent-soft2:rgba(10,99,233,.16);
+  --good:#1E8E48; --good-soft:#E8F6EE;
+  --bad:#D63125; --bad-soft:#FCEDEB;
+  --warn:#B26A00; --warn-soft:#FCF3E3;
+  --violet:#6E43D9; --violet-soft:#F1EDFB;
+  --teal:#0E8FA8;
+  --btn:#0D0D0F; --btn-hover:#2D2D33; --on-btn:#FFFFFF;
+  --shadow:0 1px 2px rgba(20,20,30,.04);
+  --shadow-lg:0 8px 16px rgba(20,20,30,.07), 0 20px 48px rgba(20,20,30,.10);
+  --grid-line:rgba(20,20,30,.055);
+  --r:12px; --r-sm:8px;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",ui-sans-serif,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+:root[data-theme="dark"]{
+  --bg:#101012; --surface:#17171A; --surface2:#1C1C20; --sunken:#232327; --side:#131316;
+  --ink:#F2F2F4; --ink2:#A2A2A9; --ink3:#66666E;
+  --line:#2C2C31; --hairline:#232328;
+  --accent:#4A8DF6; --accent-hover:#6AA2F8; --on-accent:#FFFFFF;
+  --accent-soft:rgba(74,141,246,.13); --accent-soft2:rgba(74,141,246,.24);
+  --good:#3DC46C; --good-soft:rgba(61,196,108,.13);
+  --bad:#F0554A; --bad-soft:rgba(240,85,74,.13);
+  --warn:#E8A13D; --warn-soft:rgba(232,161,61,.13);
+  --violet:#9775F5; --violet-soft:rgba(151,117,245,.14);
+  --teal:#3DB9D3;
+  --btn:#F2F2F4; --btn-hover:#D9D9DE; --on-btn:#111114;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+  --shadow-lg:0 8px 16px rgba(0,0,0,.4), 0 20px 48px rgba(0,0,0,.5);
+  --grid-line:rgba(255,255,255,.06);
+}
+
+/* ============ BASE ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font); background:var(--bg); color:var(--ink);
+  font-size:13.5px; line-height:1.45; letter-spacing:-0.008em;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer;letter-spacing:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+h1,h2,h3,h4{font-weight:700;letter-spacing:-0.02em;text-wrap:balance;line-height:1.25}
+svg{display:block}
+::selection{background:var(--accent-soft2)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-radius:6px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+.num{font-variant-numeric:tabular-nums}
+
+/* ============ LOGIN — premium sahne ============ */
+:root{
+  --lg-glass:rgba(255,255,255,.62); --lg-bord:rgba(15,20,40,.09);
+  --lg-glare:rgba(255,255,255,.55); --lg-ground:rgba(11,40,120,.22);
+  --lg-cardsh:0 1px 2px rgba(20,20,40,.05),0 12px 32px -12px rgba(20,30,80,.12);
+  --lg-marksh:drop-shadow(0 26px 44px rgba(11,55,200,.30));
+}
+:root[data-theme="dark"]{
+  --lg-glass:rgba(22,24,34,.52); --lg-bord:rgba(255,255,255,.10);
+  --lg-glare:rgba(255,255,255,.07); --lg-ground:rgba(0,0,0,.55);
+  --lg-cardsh:0 1px 2px rgba(0,0,0,.4),0 16px 40px -16px rgba(0,0,0,.6);
+  --lg-marksh:drop-shadow(0 26px 50px rgba(30,90,255,.45));
+}
+.lg{position:relative;height:100vh;height:100svh;overflow:hidden;background:var(--bg);display:flex;flex-direction:column}
+#lg-gl{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.lg.no-gl::before{content:"";position:absolute;inset:0;z-index:0;background:
+  radial-gradient(50% 40% at 50% 16%,var(--accent-soft2),transparent 70%),
+  radial-gradient(45% 42% at 15% 72%,var(--violet-soft),transparent 70%),
+  radial-gradient(45% 42% at 85% 74%,rgba(43,212,196,.13),transparent 70%)}
+.lg-fade{position:absolute;left:0;right:0;bottom:0;height:170px;z-index:1;pointer-events:none;background:linear-gradient(to top,var(--bg),transparent)}
+.lg-top{position:absolute;top:0;left:0;right:0;z-index:6;display:flex;align-items:center;gap:10px;padding:15px clamp(16px,3vw,28px)}
+.lg-brand{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:-0.02em}
+.lg-brand svg{border-radius:7px}
+.lg-pill{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:99px;background:var(--lg-glass);border:1px solid var(--lg-bord);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--ink2);font-size:11.5px;font-weight:600}
+.lg-theme{width:32px;height:32px;flex:none;border-radius:99px;display:flex;align-items:center;justify-content:center;background:var(--lg-glass);border:1px solid var(--lg-bord);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--ink2);transition:color .15s,border-color .15s}
+.lg-theme:hover{color:var(--ink);border-color:var(--ink3)}
+.lg-wrap{position:relative;z-index:2;flex:1;min-height:0;width:100%;max-width:1100px;margin:0 auto;padding:clamp(56px,8vh,80px) 24px clamp(10px,2.2vh,22px);display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* --- 3B sahne: yörünge + logo --- */
+.lg-stage{position:relative;width:min(620px,94vw);height:clamp(148px,23vh,208px);perspective:900px;flex:none}
+.lg-mark{position:absolute;left:50%;top:50%;z-index:3;filter:var(--lg-marksh);will-change:transform;transform:translate(-50%,-50%)}
+.lg-mark svg{border-radius:26px}
+.lg-ground{position:absolute;left:50%;top:calc(50% + 82px);width:190px;height:36px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(50% 50% at 50% 50%,var(--lg-ground),transparent 70%);filter:blur(7px)}
+.lg-chip{position:absolute;left:50%;top:50%;opacity:0;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--lg-glass);border:1px solid var(--lg-bord);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:11.5px;font-weight:700;letter-spacing:.05em;color:var(--ink2);white-space:nowrap;will-change:transform,opacity;pointer-events:none}
+.lg-chip i{width:7px;height:7px;border-radius:50%;display:block}
+/* --- başlık --- */
+.lg-eyebrow{margin-top:clamp(2px,1vh,10px);font-size:11.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ink3);text-align:center}
+.lg-h1{margin-top:clamp(6px,1.2vh,12px);text-align:center;font-size:clamp(32px,min(6vw,8vh),64px);font-weight:800;letter-spacing:-0.042em;line-height:1.03}
+.lg-grad{background:linear-gradient(100deg,#3D9BFF 0%,#7C5CFF 48%,#2BD4C4 95%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:lgSheen 7s ease-in-out infinite alternate}
+@keyframes lgSheen{to{background-position:100% 0}}
+.lg-tag{margin-top:clamp(8px,1.5vh,15px);font-size:clamp(13.5px,1.6vw,16px);color:var(--ink2);max-width:52ch;text-align:center;text-wrap:balance}
+/* --- rol kartları --- */
+.lg-roles{margin-top:clamp(18px,3.8vh,40px);display:grid;grid-template-columns:repeat(4,minmax(0,236px));gap:12px;width:100%;justify-content:center}
+.lgc{position:relative;overflow:hidden;text-align:left;display:flex;flex-direction:column;gap:10px;padding:16px 17px 14px;min-height:clamp(150px,21vh,184px);border-radius:20px;background:var(--lg-glass);border:1px solid var(--lg-bord);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);box-shadow:var(--lg-cardsh);transform:perspective(750px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--lift,0px));transition:border-color .25s,box-shadow .25s,transform .16s ease-out}
+.lgc:hover{--lift:-5px;border-color:color-mix(in srgb,var(--hc) 50%,var(--lg-bord));box-shadow:0 26px 52px -22px color-mix(in srgb,var(--hc) 50%,transparent),var(--lg-cardsh)}
+.lgc::after{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),var(--lg-glare),transparent 65%);opacity:0;transition:opacity .3s;pointer-events:none}
+.lgc:hover::after{opacity:1}
+.lgc-ico{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,var(--hc1),var(--hc2));box-shadow:0 10px 18px -8px var(--hc2),inset 0 1px 0 rgba(255,255,255,.35)}
+.lgc-adm{--hc:#8B5CF6;--hc1:#A78BFA;--hc2:#6D3BE0}
+.lgc-tch{--hc:#3B82F6;--hc1:#60A5FA;--hc2:#1E5FE0}
+.lgc-stu{--hc:#22B36B;--hc1:#4ADE8C;--hc2:#15915B}
+.lgc-par{--hc:#F08149;--hc1:#FFAE73;--hc2:#E0662E}
+.lgc-tag{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:1px}
+.lgc-id{display:flex;flex-direction:column;gap:2px;margin-top:-4px}
+.lgc-name{font-weight:700;font-size:15px;letter-spacing:-0.01em}
+.lgc-sub{font-size:12px;color:var(--ink2);line-height:1.35}
+.lgc-go{margin-top:auto;padding-top:8px;display:inline-flex;align-items:center;gap:5px;font-weight:600;font-size:12.5px;color:var(--accent)}
+.lgc-go svg{transition:transform .2s}
+.lgc:hover .lgc-go svg{transform:translateX(3px)}
+/* --- özellikler --- */
+.lg-feats{margin-top:clamp(16px,3vh,30px);display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.lg-feat{display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:99px;background:var(--lg-glass);border:1px solid var(--lg-bord);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font-size:12px;font-weight:600;color:var(--ink2)}
+.lg-feat svg{color:var(--accent)}
+.lg-foot{margin-top:clamp(12px,2.4vh,26px);color:var(--ink3);font-size:11.5px;text-align:center}
+/* --- açılış koreografisi --- */
+.lg [data-rev]{opacity:0;animation:lgRev .9s cubic-bezier(.22,1,.36,1) forwards;animation-delay:var(--d,0s)}
+@keyframes lgRev{from{opacity:0;transform:translateY(24px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+@media (prefers-reduced-motion: reduce){
+  .lg [data-rev]{animation:none;opacity:1}
+  .lg-grad{animation:none}
+  .lgc,.lgc-go svg{transition:none}
+}
+/* dar ya da alçak pencerede tek ekran zorlanır — kaydırmaya geri dön */
+@media(max-width:1020px),(max-height:640px){
+  .lg{height:auto;min-height:100vh;min-height:100svh}
+  .lg-wrap{justify-content:flex-start;padding-bottom:34px}
+  .lgc{min-height:172px}
+}
+@media(max-width:1020px){.lg-roles{grid-template-columns:repeat(2,minmax(210px,250px))}}
+@media(max-width:560px){
+  .lg-wrap{padding-top:78px}
+  .lg-roles{grid-template-columns:minmax(0,330px)}
+  .lg-stage{height:196px}
+  .lg-pill{font-size:10.5px;padding:4px 10px}
+}
+
+/* ============ AVATARS ============ */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;flex:none;letter-spacing:0}
+.av-40{width:38px;height:38px;font-size:13px}
+.av-32{width:28px;height:28px;font-size:10.5px}
+.av-56{width:48px;height:48px;font-size:16px}
+.av-g0{background:#3B76D3}.av-g1{background:#7A5BD0}.av-g2{background:#CE6A43}
+.av-g3{background:#33996B}.av-g4{background:#C25577}.av-g5{background:#3F94B5}
+
+/* ============ SHELL ============ */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:232px;flex:none;padding:14px 10px 12px;display:flex;flex-direction:column;gap:2px;background:var(--side);border-right:1px solid var(--hairline);position:sticky;top:0;height:100vh;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:9px;padding:4px 8px 12px}
+.brand .b-mark{width:26px;height:26px;border-radius:7px}
+.brand .b-name{font-weight:800;font-size:15px;letter-spacing:-0.02em}
+.brand .b-role{font-size:10px;color:var(--ink3);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.nav-label{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);padding:12px 10px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:var(--r-sm);color:var(--ink2);font-weight:500;font-size:13px;width:100%;text-align:left;transition:background .12s,color .12s}
+.nav-item svg{flex:none;opacity:.85}
+.nav-item:hover{background:var(--sunken);color:var(--ink)}
+.nav-item.on{background:#ECECEF;color:var(--ink);font-weight:600}
+:root[data-theme="dark"] .nav-item.on{background:var(--sunken)}
+.nav-item .n-badge{margin-left:auto;background:var(--ink);color:var(--bg);font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:99px}
+.side-foot{margin-top:auto;padding-top:10px;border-top:1px solid var(--hairline);display:flex;flex-direction:column;gap:2px}
+.persona{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:var(--r-sm)}
+.persona .p-name{font-weight:600;font-size:12.5px;line-height:1.2}
+.persona .p-sub{color:var(--ink3);font-size:10.5px;margin-top:1px}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--bg)}
+.topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:8px 22px;background:var(--surface);border-bottom:1px solid var(--hairline);min-height:46px}
+.tb-title{font-weight:700;font-size:14px;letter-spacing:-0.015em;white-space:nowrap}
+.tb-crumb{color:var(--ink3);font-weight:500;font-size:12.5px}
+.tb-spacer{flex:1}
+.tb-search{position:relative;width:280px}
+.tb-search input{width:100%;padding:6px 12px 6px 30px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:12.5px;outline:none;transition:border-color .15s,box-shadow .15s}
+.tb-search input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tb-search .s-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--ink3);pointer-events:none}
+.s-drop{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-lg);overflow:hidden;max-height:360px;overflow-y:auto;z-index:60}
+.s-row{display:flex;align-items:center;gap:10px;padding:8px 12px;width:100%;text-align:left}
+.s-row:hover{background:var(--sunken)}
+.s-row .sr-name{font-weight:600;font-size:12.5px}
+.s-row .sr-sub{font-size:11px;color:var(--ink2)}
+.s-row .sr-net{margin-left:auto;font-weight:700;font-size:12px;color:var(--ink2)}
+.s-empty{padding:14px;text-align:center;color:var(--ink3);font-size:12.5px}
+.icon-btn{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:var(--ink2);transition:background .12s}
+.icon-btn:hover{background:var(--sunken);color:var(--ink)}
+
+.content{padding:18px 22px 28px;max-width:1560px;width:100%;margin:0 auto}
+.content.content-chat{padding:0;max-width:none;margin:0}
+.content.content-chat .view{animation:none}
+.view{animation:viewIn .2s ease}
+@keyframes viewIn{from{opacity:0}to{opacity:1}}
+
+/* ============ STAT STRIP ============ */
+.strip{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 4px;margin-bottom:14px;overflow-x:auto}
+.strip-item{flex:1;min-width:108px;padding:2px 18px;border-left:1px solid var(--hairline)}
+.strip-item:first-child{border-left:none}
+.strip-item .s-lab{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+.strip-item .s-val{font-size:19px;font-weight:800;letter-spacing:-0.02em;margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.strip-item .s-val .unit{font-size:12px;font-weight:600;color:var(--ink3)}
+.strip-item .s-sub{font-size:11px;color:var(--ink2);margin-top:2px;white-space:nowrap;display:flex;align-items:center;gap:5px}
+
+/* ============ CARDS & GRID ============ */
+.grid{display:grid;gap:12px}
+.grid>*{min-width:0}
+.g-kpi{grid-template-columns:repeat(4,1fr)}
+.g-2-1{grid-template-columns:2fr 1fr}
+.g-1-1{grid-template-columns:1fr 1fr}
+.g-3{grid-template-columns:repeat(3,1fr)}
+.g-subj{grid-template-columns:repeat(3,1fr)}
+.stack{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;min-width:0}
+.card.flat{box-shadow:none}
+.card.pad-0{padding:0;overflow:hidden}
+.card-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.card-title{font-size:13px;font-weight:700;letter-spacing:-0.01em}
+.card-sub{font-size:11.5px;color:var(--ink2);width:100%;margin-top:-4px}
+.card-head .spacer{flex:1}
+.page-head{display:flex;align-items:flex-end;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.page-head h2{font-size:19px;font-weight:800;letter-spacing:-0.02em}
+.page-head .ph-sub{color:var(--ink2);font-size:12.5px;margin-top:2px}
+.page-head .spacer{flex:1}
+.kpi .k-label{font-size:11px;font-weight:700;color:var(--ink3);display:flex;align-items:center;gap:6px;letter-spacing:.03em;text-transform:uppercase}
+.kpi .k-value{font-size:22px;font-weight:800;letter-spacing:-0.02em;margin-top:5px;font-variant-numeric:tabular-nums}
+.kpi .k-unit{font-size:12.5px;font-weight:600;color:var(--ink3);margin-left:2px}
+.kpi .k-meta{margin-top:4px;font-size:11.5px;color:var(--ink2);display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+
+/* ============ PILLS / DELTAS ============ */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.pill.acc{background:var(--accent-soft);color:var(--accent)}
+.pill.good{background:var(--good-soft);color:var(--good)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.vio{background:var(--violet-soft);color:var(--violet)}
+.pill.mut{background:var(--sunken);color:var(--ink2)}
+.delta{display:inline-flex;align-items:center;gap:2px;font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
+.delta.up{color:var(--good)}.delta.down{color:var(--bad)}.delta.flat{color:var(--ink3)}
+.rank-pill{display:inline-flex;flex-direction:column;align-items:center;gap:1px;padding:7px 13px;border-radius:10px;background:var(--sunken);min-width:64px}
+.rank-pill .rp-v{font-size:15.5px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank-pill .rp-l{font-size:10px;font-weight:600;color:var(--ink2);letter-spacing:.03em}
+.rank-pill.hero{background:var(--accent-soft);color:var(--accent)}
+.rank-pill.hero .rp-l{color:var(--accent);opacity:.75}
+
+/* ============ SEGMENTED / CHIPS ============ */
+.seg{display:inline-flex;background:var(--sunken);border-radius:8px;padding:2px;gap:2px}
+.seg button{padding:4px 10px;border-radius:6px;font-size:11.5px;font-weight:600;color:var(--ink2);transition:background .12s,color .12s;white-space:nowrap}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:99px;border:1px solid var(--line);font-size:12px;font-weight:500;color:var(--ink2);transition:all .12s;background:var(--surface)}
+.chip:hover{border-color:var(--ink3);color:var(--ink)}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* ============ BUTTONS — ChatGPT stili ============ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;border-radius:9px;font-weight:600;font-size:12.5px;transition:background .15s,border-color .15s;white-space:nowrap}
+.btn.primary{background:var(--btn);color:var(--on-btn)}
+.btn.primary:hover{background:var(--btn-hover)}
+.btn.ghost{background:var(--sunken);color:var(--ink)}
+.btn.ghost:hover{background:var(--line)}
+.btn.outline{border:1px solid var(--line);background:var(--surface)}
+.btn.outline:hover{border-color:var(--ink3)}
+.btn.ai{background:var(--btn);color:var(--on-btn)}
+.btn.ai:hover{background:var(--btn-hover)}
+.btn.ai svg{color:#B79CFF}
+:root[data-theme="dark"] .btn.ai svg{color:#7A5BD0}
+.btn.lg{padding:10px 20px;font-size:13.5px;border-radius:10px}
+.btn.sm{padding:4px 10px;font-size:11.5px;border-radius:7px}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* ============ TABLES ============ */
+.tbl-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface2)}
+td{padding:7px 12px;border-bottom:1px solid var(--hairline);vertical-align:middle;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+tbody tr.rowlink{cursor:pointer;transition:background .1s}
+tbody tr.rowlink:hover{background:var(--surface2)}
+:root[data-theme="dark"] tbody tr.rowlink:hover{background:var(--sunken)}
+th.r,td.r{text-align:right}
+th.c,td.c{text-align:center}
+.t-name{display:flex;align-items:center;gap:8px}
+.t-name .tn-t{font-weight:600;white-space:nowrap}
+.tn-s{font-size:10.5px;color:var(--ink3)}
+.mini-tbl th{padding:7px 10px}.mini-tbl td{padding:6px 10px}
+
+/* ============ INPUTS ============ */
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:5px}
+.inp,select.inp{width:100%;padding:7px 11px;border-radius:8px;border:1px solid var(--line);background:var(--surface);outline:none;font-size:12.5px;transition:border-color .12s,box-shadow .12s}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.cell-inp{width:42px;padding:4px 3px;text-align:center;border:1px solid var(--line);border-radius:6px;background:var(--surface);outline:none;font-size:12px;font-variant-numeric:tabular-nums}
+.cell-inp:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+
+/* ============ CHARTS ============ */
+.chart-box{position:relative}
+.chart-hover{position:relative}
+.ch-guide{display:none;position:absolute;width:1px;background:var(--ink3);opacity:.45;pointer-events:none}
+.ch-tip{display:none;position:absolute;top:4px;z-index:6;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow-lg);padding:9px 12px;font-size:12.5px;pointer-events:none;min-width:160px}
+.ct-title{font-weight:700;font-size:12px;margin-bottom:5px;white-space:nowrap;color:var(--ink)}
+.ct-row{display:flex;align-items:center;gap:7px;margin-top:3px;white-space:nowrap;color:var(--ink2)}
+.ct-row .ct-dot{width:8px;height:8px;border-radius:2.5px;flex:none}
+.ct-row b{color:var(--ink);font-variant-numeric:tabular-nums;margin-left:auto;padding-left:16px}
+.ch-pt{position:absolute;width:10px;height:10px;border-radius:50%;border:2px solid var(--surface);transform:translate(-50%,-50%);pointer-events:none;z-index:5;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:11.5px;color:var(--ink2);align-items:center}
+.legend .l-item{display:flex;align-items:center;gap:5px;font-weight:500}
+.legend .l-dot{width:8px;height:8px;border-radius:2.5px}
+.legend .l-dash{width:13px;height:0;border-top:2px dashed var(--ink3)}
+.draw-line{stroke-dasharray:1;stroke-dashoffset:1;animation:drawL .8s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes drawL{to{stroke-dashoffset:0}}
+.fade-in{animation:fIn .6s .25s both}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+.hbar-row{display:grid;grid-template-columns:44px 1fr 76px;align-items:center;gap:10px;padding:5px 0}
+.hbar-track{height:7px;border-radius:99px;background:var(--sunken);overflow:hidden}
+.hbar-fill{height:100%;border-radius:99px;background:var(--accent);transform-origin:left;animation:growX .6s cubic-bezier(.2,.8,.3,1) both}
+@keyframes growX{from{transform:scaleX(0)}}
+.hbar-lab{font-size:11.5px;font-weight:600;color:var(--ink2)}
+.hbar-val{font-size:11.5px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.hbar-val .max{color:var(--ink3);font-weight:500}
+.dyb{display:flex;height:6px;border-radius:99px;overflow:hidden;background:var(--sunken)}
+.dyb i{display:block;height:100%}
+.dyb .d{background:var(--good)}.dyb .y{background:var(--bad)}.dyb .b{background:var(--ink3);opacity:.35}
+
+/* ============ SUBJECT CARDS ============ */
+.subj-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 14px;box-shadow:var(--shadow)}
+.subj-card .sc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.subj-card .sc-name{font-weight:700;font-size:12.5px}
+.subj-card .sc-net{font-size:19px;font-weight:800;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+.subj-card .sc-max{font-size:11.5px;color:var(--ink3);font-weight:600}
+.subj-card .sc-meta{display:flex;align-items:center;justify-content:space-between;margin-top:7px;font-size:11px;color:var(--ink2)}
+
+/* ============ STUDENT HERO / HIGHLIGHTS ============ */
+.stu-hero{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.stu-hero .sh-info{flex:1;min-width:190px}
+.stu-hero h2{font-size:18px;font-weight:800}
+.stu-hero .sh-sub{color:var(--ink2);font-size:12px;margin-top:3px}
+.stu-hero .sh-ranks{display:flex;gap:8px;flex-wrap:wrap}
+.hl-card{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);cursor:pointer;transition:border-color .15s;text-align:left;width:100%}
+.hl-card:hover{border-color:var(--ink3)}
+.hl-card .hl-tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px}
+.hl-card .hl-name{font-weight:700;font-size:13px}
+.hl-card .hl-sub{font-size:11.5px;color:var(--ink2);margin-top:1px}
+
+/* ============ MODAL / SHEET ============ */
+.modal-veil{position:fixed;inset:0;background:rgba(15,15,20,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;animation:veilIn .2s}
+@keyframes veilIn{from{opacity:0}}
+.sheet{background:var(--surface);border-radius:16px;box-shadow:var(--shadow-lg);width:100%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;animation:sheetIn .28s cubic-bezier(.2,.9,.3,1.02)}
+.sheet.wide{max-width:800px}
+@keyframes sheetIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+.sheet-head{display:flex;align-items:center;gap:11px;padding:16px 20px 12px;border-bottom:1px solid var(--hairline);flex:none}
+.sheet-head h3{font-size:15px;font-weight:700}
+.sheet-head .sub{font-size:11.5px;color:var(--ink2);margin-top:1px}
+.sheet-body{padding:18px 20px;overflow-y:auto}
+.sheet-foot{padding:12px 20px;border-top:1px solid var(--hairline);display:flex;gap:8px;justify-content:flex-end;flex:none}
+
+/* ============ UPLOAD WIZARD ============ */
+.dropzone{border:1.5px dashed var(--line);border-radius:var(--r);padding:34px 20px;text-align:center;transition:all .15s;cursor:pointer;background:var(--surface2)}
+.dropzone:hover,.dropzone.over{border-color:var(--accent);background:var(--accent-soft)}
+.dropzone .dz-ico{width:44px;height:44px;border-radius:11px;background:var(--sunken);color:var(--ink);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.dropzone .dz-t{font-weight:700;font-size:13.5px}
+.dropzone .dz-s{color:var(--ink2);font-size:12px;margin-top:3px}
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:12px;align-items:flex-start;padding:8px 0}
+.step .st-dot{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:var(--sunken);color:var(--ink3);font-size:11.5px}
+.step.done .st-dot{background:var(--good-soft);color:var(--good)}
+.step.run .st-dot{background:var(--accent-soft);color:var(--accent)}
+.step .st-t{font-weight:600;font-size:13px;padding-top:2px}
+.step .st-s{font-size:11.5px;color:var(--ink2);margin-top:1px}
+.step.idle{opacity:.4}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.warn-box{display:flex;gap:9px;padding:10px 12px;border-radius:10px;background:var(--warn-soft);color:var(--warn);font-size:12px;font-weight:500;align-items:flex-start}
+.ok-box{display:flex;gap:9px;padding:10px 12px;border-radius:10px;background:var(--good-soft);color:var(--good);font-size:12px;font-weight:500;align-items:flex-start}
+
+/* ============ AI CHAT — ChatGPT düzeni ============ */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100dvh - 47px)}
+.chat-scroll{flex:1;overflow-y:auto;padding:30px 24px 12px}
+.chat-inner{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+.chat-empty{text-align:center;padding:8vh 16px 12px}
+.chat-empty .ce-orb{width:52px;height:52px;margin:0 auto 18px;border-radius:13px;overflow:hidden}
+.chat-empty h3{font-size:27px;font-weight:700;letter-spacing:-0.02em}
+.chat-empty p{color:var(--ink2);margin-top:8px;font-size:15px}
+.chat-sugs{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:26px;max-width:680px;margin-left:auto;margin-right:auto}
+.chat-sugs .chip{font-size:13px;padding:7px 14px}
+.msg{display:flex;gap:13px;animation:msgIn .25s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.msg.me{justify-content:flex-end}
+.msg .m-av{width:30px;height:30px;border-radius:8px;overflow:hidden;flex:none;margin-top:2px}
+.msg .m-body{min-width:0}
+.msg.me .m-body{max-width:70%;background:var(--sunken);color:var(--ink);padding:10px 16px;border-radius:18px;font-size:15px}
+.msg.bot .m-body{flex:1;font-size:15px;line-height:1.65}
+.msg .m-text b{font-weight:700}
+.msg .m-text p{margin:0 0 7px}
+.msg .m-text p:last-child{margin-bottom:0}
+.msg .m-text ul{margin:5px 0 7px;padding-left:18px}
+.msg .m-text li{margin:2px 0}
+.m-card{margin-top:11px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:var(--surface)}
+.m-card table{font-size:13.5px}
+.m-card th{font-size:11px}
+.typing{display:inline-flex;gap:4px;padding:7px 2px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--ink3);animation:tp 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+.composer{flex:none;padding:10px 24px 18px}
+.composer-inner{max-width:920px;margin:0 auto;position:relative}
+.composer input{width:100%;padding:15px 56px 15px 22px;border-radius:28px;border:1px solid var(--line);background:var(--surface);outline:none;font-size:15px;box-shadow:var(--shadow)}
+.composer input:focus{border-color:var(--ink3)}
+.composer .send{position:absolute;right:9px;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:var(--btn);color:var(--on-btn);display:flex;align-items:center;justify-content:center;transition:background .12s}
+.composer .send:hover{background:var(--btn-hover)}
+.composer .hint{text-align:center;font-size:11px;color:var(--ink3);margin-top:8px}
+
+/* ============ AI INSIGHT ============ */
+.ins-sec{margin-bottom:16px;animation:msgIn .3s both}
+.ins-sec h4{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);margin-bottom:7px}
+.ins-sec p{font-size:13.5px;line-height:1.6}
+.ins-sec ul{padding-left:2px;list-style:none;display:flex;flex-direction:column;gap:6px}
+.ins-sec li{display:flex;gap:9px;font-size:13px;line-height:1.5}
+.ins-sec li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none;margin-top:7px}
+.ins-sec.warn li::before{background:var(--warn)}
+.ins-sec.good li::before{background:var(--good)}
+.ins-note{background:var(--sunken);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6}
+.caret{display:inline-block;width:2px;height:1em;background:var(--accent);vertical-align:text-bottom;animation:blink .8s step-start infinite;margin-left:1px}
+@keyframes blink{50%{opacity:0}}
+
+/* ============ TREE ============ */
+.tree{font-size:13px}
+.tree-node{border-left:1px solid var(--hairline);margin-left:12px;padding-left:14px}
+.tree-row{display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:8px;cursor:pointer;transition:background .1s}
+.tree-row:hover{background:var(--sunken)}
+.tree-row .tr-ico{color:var(--ink3);transition:transform .15s;flex:none}
+.tree-row.open .tr-ico{transform:rotate(90deg)}
+.tree-row .tr-name{font-weight:600}
+.tree-row .tr-sub{font-size:11px;color:var(--ink3)}
+.tree-leaf{display:flex;align-items:center;gap:9px;padding:4px 8px;border-radius:8px;color:var(--ink2)}
+.tree-leaf:hover{background:var(--sunken)}
+
+/* ============ TOAST / MISC ============ */
+.toast-wrap{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{display:flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:12.5px;font-weight:600;box-shadow:var(--shadow-lg);animation:toastIn .3s cubic-bezier(.2,.9,.3,1.1)}
+.toast .t-ico{color:var(--good)}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+.toast.out{animation:toastOut .25s forwards}
+@keyframes toastOut{to{opacity:0;transform:translateY(8px)}}
+.mut{color:var(--ink2)}.mut3{color:var(--ink3)}
+.sm{font-size:11.5px}.xs{font-size:10.5px}
+.w600{font-weight:600}.w700{font-weight:700}.w800{font-weight:800}
+.empty-state{text-align:center;padding:36px 20px;color:var(--ink2)}
+.divider{height:1px;background:var(--hairline);margin:12px 0}
+.note-card{background:var(--surface2);border:1px solid var(--hairline);border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.55}
+.mob-nav-btn{display:none}
+.scrim{display:none}
+
+@media(max-width:1080px){
+  .g-kpi{grid-template-columns:repeat(2,1fr)}
+  .g-2-1,.g-1-1{grid-template-columns:1fr}
+  .g-3{grid-template-columns:1fr}
+  .g-subj{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:900px){
+  .scrim{display:block;position:fixed;inset:0;background:rgba(15,15,20,.4);z-index:85;animation:veilIn .2s}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:90;transform:translateX(-100%);transition:transform .25s cubic-bezier(.2,.8,.3,1);box-shadow:var(--shadow-lg);height:100dvh}
+  .sidebar.open{transform:none}
+  .mob-nav-btn{display:flex}
+  .content{padding:14px}
+  .topbar{padding:8px 14px}
+  .tb-search{width:160px}
+  .g-subj{grid-template-columns:1fr}
+  .chat-wrap{height:calc(100dvh - 47px)}
+  .chat-scroll{padding:16px 14px 8px}
+  .composer{padding:8px 14px 12px}
+}
+@media(max-width:600px){
+  .g-kpi{grid-template-columns:1fr}
+  .tb-crumb{display:none}
+  .tb-search{flex:1;width:auto;min-width:0}
+  .tb-title{white-space:nowrap}
+  .kpi .k-meta{flex-wrap:wrap}
+  .stu-hero .sh-ranks{width:100%}
+  .rank-pill{flex:1;min-width:0}
+  .strip{flex-wrap:wrap}
+  .strip-item{min-width:45%;padding:6px 14px;border-left:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;transition-duration:.01ms !important}
+}
+
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%93%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Derece — LGS deneme takip platformu demosu. Tüm veriler kurgusaldır.">
+</head>
+<body>
+
+
+<div id="root"></div>
+<div class="toast-wrap" id="toasts"></div>
+<div id="modal-root"></div>
+
+<script>
+"use strict";
+/* =====================================================================
+   Derece — Eğitim Platformu (DEMO)
+   Tüm veriler kurgusaldır; tanıtım amaçlı statik demodur.
+   ===================================================================== */
+
+/* ---------- utils ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const rnd = mulberry32(20260806);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const fmt1=n=>n.toLocaleString('tr-TR',{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmt2=n=>n.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt0=n=>Math.round(n).toLocaleString('tr-TR');
+const fmtInt=n=>n.toLocaleString('tr-TR');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const TRfold=s=>s.toLocaleLowerCase('tr-TR').replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/î/g,'i').replace(/â/g,'a');
+const initials=name=>name.split(' ').map(w=>w[0]).slice(0,2).join('').toLocaleUpperCase('tr-TR');
+const avClass=id=>'av-g'+(id%6);
+const ordinal=n=>n+'.';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- icons (inline SVG, stroke 1.8) ---------- */
+const I = (()=>{
+  const w=(inner,vb='0 0 24 24')=>(size=18)=>`<svg width="${size}" height="${size}" viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+  return {
+    home:w('<path d="M4 11.5 12 5l8 6.5"/><path d="M6 10v9h12v-9"/>'),
+    users:w('<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.7c1.9.6 3 2.3 3.3 4.8"/>'),
+    chart:w('<path d="M4 20h16"/><path d="M6.5 16.5v-5M11 16.5V8M15.5 16.5v-3M20 16.5V5.5" stroke-width="2.2"/>'),
+    edit:w('<path d="M14.5 5.5 18.5 9.5 8.5 19.5H4.5v-4z"/><path d="M12.5 7.5l4 4"/>'),
+    sparkles:w('<path d="M12 4l1.6 4.2L18 9.8l-4.4 1.6L12 16l-1.6-4.6L6 9.8l4.4-1.6z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>'),
+    chat:w('<path d="M20 12a8 8 0 1 0-3.2 6.4L20 19.5l-.7-3A8 8 0 0 0 20 12z"/>'),
+    search:w('<circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.8-3.8"/>'),
+    upload:w('<path d="M12 15V4.5"/><path d="m7.5 8.5 4.5-4 4.5 4"/><path d="M4.5 15.5v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3"/>'),
+    doc:w('<path d="M7 3.5h7L18.5 8v12a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M13.5 3.5V8.5H18.5"/>'),
+    chevR:w('<path d="m9 6 6 6-6 6"/>'),
+    up:w('<path d="M12 19V5"/><path d="m6 11 6-6 6 6"/>'),
+    down:w('<path d="M12 5v14"/><path d="m6 13 6 6 6-6"/>'),
+    trendUp:w('<path d="m4 16 5-5 3.5 3.5L20 8"/><path d="M15 8h5v5"/>'),
+    trendDown:w('<path d="m4 8 5 5 3.5-3.5L20 16"/><path d="M15 16h5v-5"/>'),
+    cal:w('<rect x="4" y="5.5" width="16" height="15" rx="2"/><path d="M4 10h16M8.5 3.5v3M15.5 3.5v3"/>'),
+    school:w('<path d="m12 4 9 4.5-9 4.5-9-4.5z"/><path d="M6.5 10.8V16c0 1.5 2.5 3 5.5 3s5.5-1.5 5.5-3v-5.2"/>'),
+    x:w('<path d="M6 6l12 12M18 6 6 18"/>'),
+    check:w('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+    send:w('<path d="M5 12 20 5l-4 14-4.5-5.5z"/><path d="M20 5 11.5 13.5"/>'),
+    sun:w('<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4"/>'),
+    moon:w('<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>'),
+    swap:w('<path d="M7 8h13l-3.5-3.5"/><path d="M17 16H4l3.5 3.5"/>'),
+    menu:w('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+    grid:w('<rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/>'),
+    target:w('<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>'),
+    warn:w('<path d="M12 4 21 19.5H3z"/><path d="M12 10v4M12 16.8v.2"/>'),
+    info:w('<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 7.8v.2"/>'),
+    spinner:w('<path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5" stroke-width="2.2"/>'),
+    tree:w('<circle cx="12" cy="5.5" r="2.2"/><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M12 7.7V12M12 12l-5 3.8M12 12l5 3.8"/>'),
+    logout:w('<path d="M14 4.5H6.5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1H14"/><path d="M10.5 12h9l-3-3M19.5 12l-3 3"/>'),
+    star:w('<path d="m12 4.5 2.1 4.6 5 .6-3.7 3.4 1 5-4.4-2.5-4.4 2.5 1-5L4.9 9.7l5-.6z"/>'),
+    xlsx:w('<path d="M7 3.5h7L18.5 8v12a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="m9.5 12 5 6M14.5 12l-5 6"/>'),
+    phone:w('<path d="M7 4.5h3l1.2 4-2 1.5a11 11 0 0 0 4.8 4.8l1.5-2 4 1.2v3a1.5 1.5 0 0 1-1.6 1.5C10.5 18 6 13.5 5.5 6.1A1.5 1.5 0 0 1 7 4.5z"/>'),
+  };
+})();
+/* Marka: kürsü (derece) + parıltı — cam dokulu squircle üzerinde */
+const logoSVG=(s=64)=>`<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><defs>
+<linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5AA8FF"/><stop offset=".55" stop-color="#1E6BFF"/><stop offset="1" stop-color="#0B37C8"/></linearGradient>
+<radialGradient id="lgB" cx=".3" cy="-.12" r="1.25"><stop offset="0" stop-color="#fff" stop-opacity=".42"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient>
+<linearGradient id="lgC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#CFE2FF"/></linearGradient>
+</defs>
+<rect width="64" height="64" rx="14.5" fill="url(#lgA)"/>
+<rect width="64" height="64" rx="14.5" fill="url(#lgB)"/>
+<g fill="url(#lgC)">
+<rect x="14.6" y="31" width="9.8" height="16.6" rx="4.2" opacity=".78"/>
+<rect x="27.1" y="22.6" width="9.8" height="25" rx="4.2"/>
+<rect x="39.6" y="36.4" width="9.8" height="11.2" rx="4.2" opacity=".55"/>
+</g>
+<path d="M32 6.6c1 3.7 2.7 5.4 6.4 6.4-3.7 1-5.4 2.7-6.4 6.4-1-3.7-2.7-5.4-6.4-6.4 3.7-1 5.4-2.7 6.4-6.4Z" fill="#fff"/>
+</svg>`;
+
+/* =====================================================================
+   VERİ KATMANI — tamamı kurgusal, deterministik üretim
+   ===================================================================== */
+const SUBJECTS=[
+  {key:'tur', name:'Türkçe',              short:'TÜR', max:20, coef:4},
+  {key:'ink', name:'T.C. İnkılap Tarihi', short:'İNK', max:10, coef:1},
+  {key:'din', name:'Din Kültürü',         short:'DİN', max:10, coef:1},
+  {key:'ing', name:'İngilizce',           short:'İNG', max:10, coef:1},
+  {key:'mat', name:'Matematik',           short:'MAT', max:20, coef:4},
+  {key:'fen', name:'Fen Bilimleri',       short:'FEN', max:20, coef:4},
+];
+const MAXNET=SUBJECTS.reduce((a,s)=>a+s.max,0);           // 90
+const WMAX=SUBJECTS.reduce((a,s)=>a+s.max*s.coef,0);      // 270
+
+const SCHOOL={name:'Güneş Ortaokulu', city:'Isparta', dist:'Isparta Merkez', year:'2025–26'};
+
+const EXAMS=[
+  {id:0,name:'Tanılama Sınavı',      pub:'Güneş Ortaokulu', date:'21 Eyl 2025', scope:'okul',  diff:1.05},
+  {id:1,name:'Türkiye Geneli 1',     pub:'Rota Yayınları',  date:'12 Eki 2025', scope:'genel', diff:0.98, gk:8412},
+  {id:2,name:'Okul Denemesi 1',      pub:'Güneş Ortaokulu', date:'9 Kas 2025',  scope:'okul',  diff:1.02},
+  {id:3,name:'Türkiye Geneli 1',     pub:'Atlas Yayınları', date:'30 Kas 2025', scope:'genel', diff:0.94, gk:9105},
+  {id:4,name:'Türkiye Geneli 2',     pub:'Rota Yayınları',  date:'21 Ara 2025', scope:'genel', diff:0.96, gk:8790},
+  {id:5,name:'Türkiye Geneli 2',     pub:'Atlas Yayınları', date:'18 Oca 2026', scope:'genel', diff:0.92, gk:9350},
+  {id:6,name:'Okul Denemesi 2',      pub:'Güneş Ortaokulu', date:'8 Şub 2026',  scope:'okul',  diff:1.01},
+  {id:7,name:'Türkiye Geneli 3',     pub:'Rota Yayınları',  date:'8 Mar 2026',  scope:'genel', diff:0.95, gk:8926},
+  {id:8,name:'Türkiye Geneli 4',     pub:'Rota Yayınları',  date:'5 Nis 2026',  scope:'genel', diff:0.93, gk:9210},
+  {id:9,name:'Türkiye Geneli 3',     pub:'Atlas Yayınları', date:'3 May 2026',  scope:'genel', diff:0.94, gk:9042},
+];
+// Excel içe aktarma demosunda eklenen sınav (başta gizli)
+const IMPORT_EXAM={id:10,name:'Türkiye Geneli 5', pub:'Panorama Yayınları', date:'7 Haz 2026', scope:'genel', diff:0.94, gk:8654, fresh:true};
+
+const CLASSES=['6-A','6-B','6-C','6-D','6-E'];
+const TEACHERS=[
+  {name:'Elif Yalçın',  branch:'Matematik',     cls:'6-A', rehber:true},
+  {name:'Murat Kaya',   branch:'Fen Bilimleri', cls:'6-B'},
+  {name:'Seda Aydın',   branch:'Türkçe',        cls:'6-C'},
+  {name:'Ali Vural',    branch:'Sosyal Bilgiler',cls:'6-D'},
+  {name:'Volkan Sarı',  branch:'Matematik',     cls:'6-E'},
+  {name:'Pınar Uçar',   branch:'İngilizce',     cls:'—'},
+  {name:'Kemal Aslan',  branch:'Din Kültürü',   cls:'—'},
+];
+const PRINCIPAL={name:'Nazan Tekin', title:'Okul Müdürü'};
+
+const FIRSTS=['Defne','Emir','Zeynep','Yusuf','Elif','Kerem','Asya','Ömer','Duru','Aras','Nehir','Çınar','Lina','Mert','Azra','Kuzey','Ecrin','Alp','İpek','Rüzgar','Mila','Eymen','Sude','Doruk','Nil','Yiğit','Ela','Baran','Masal','Toprak','Derin','Sarp','İkra','Umut','Naz','Ege','Buse','Kaan','Melis','Arda','İrem','Batu','Selin','Onur','Beren','Tuna','Ceren','Deniz','Eylül','Barış','İdil','Emre','Yaren','Efe','Nisa','Kaya','Esra','Metehan','Aylin','Burak'];
+const LASTS=['Yıldız','Demirtaş','Akman','Koçak','Erden','Sağlam','Öztürk','Kaplan','Aksu','Duman','Çetiner','Güler','Taş','Yaman','Erbay','Solmaz','Kurt','Özkan','Bulut','Ceylan','Doğru','Işık','Karan','Toprakçı','Uysal','Ünal','Sezer','Aydemir','Boz','Ergin','Tanrıverdi','Aktaş'];
+
+/* --- kahraman profiller: girişte kullanılan hikâye kişileri --- */
+const HEROES={
+  student:{name:'Deniz Arslan',  cls:'6-A', no:214, ability:.62, trend:.030, vol:.05, bias:{tur:-.06,ink:.02,din:.04,ing:.00,mat:.14,fen:.08}},
+  top:    {name:'Zeynep Korkmaz',cls:'6-A', no:207, ability:.90, trend:.006, vol:.02, bias:{tur:.05,ink:.05,din:.05,ing:.04,mat:.04,fen:.05}},
+  risk:   {name:'Kerem Doğan',   cls:'6-B', no:233, ability:.68, trend:-.028,vol:.06, bias:{tur:.05,ink:.00,din:.02,ing:-.02,mat:-.10,fen:-.04}},
+  rise:   {name:'Elif Şahin',    cls:'6-C', no:251, ability:.48, trend:.038, vol:.05, bias:{tur:.06,ink:.03,din:.03,ing:.08,mat:-.04,fen:.02}},
+};
+const PARENT={name:'Hakan Arslan', child:'Deniz Arslan', rel:'Velisi'};
+
+function makeStudents(){
+  const used=new Set(Object.values(HEROES).map(h=>h.name));
+  const out=[]; let sid=0;
+  CLASSES.forEach((cls,ci)=>{
+    const heroesHere=Object.values(HEROES).filter(h=>h.cls===cls);
+    const n=28;
+    for(let k=0;k<n;k++){
+      const hero=heroesHere.find(h=>!h._placed && k===(h===HEROES.student?3:h===HEROES.top?0:5));
+      let st;
+      if(hero){ hero._placed=true;
+        st={id:sid, name:hero.name, cls, no:hero.no, ability:hero.ability, trend:hero.trend, vol:hero.vol, bias:hero.bias};
+      } else {
+        let nm; let guard=0;
+        do{ nm=FIRSTS[Math.floor(rnd()*FIRSTS.length)]+' '+LASTS[Math.floor(rnd()*LASTS.length)]; guard++; }while(used.has(nm)&&guard<50);
+        used.add(nm);
+        const bias={}; SUBJECTS.forEach(s=>bias[s.key]=(rnd()-.5)*.24);
+        st={id:sid, name:nm, cls, no:401+ci*40+k, ability:.28+rnd()*.62, trend:(rnd()-.46)*.05, vol:.03+rnd()*.06, bias};
+      }
+      st.parentName=(st.name===HEROES.student.name)?PARENT.name:(FIRSTS[Math.floor(rnd()*FIRSTS.length)]+' '+st.name.split(' ').slice(-1)[0]);
+      st.absentAt = rnd()<.10 ? Math.floor(rnd()*10) : -1;   // bazıları 1 denemeye girmemiş
+      if(Object.values(HEROES).some(h=>h.name===st.name)) st.absentAt=-1;
+      out.push(st); sid++;
+    }
+  });
+  return out;
+}
+
+function genResult(st,exam,t){
+  const noise=()=> (rnd()*2-1)*st.vol;
+  const subj={};
+  SUBJECTS.forEach(s=>{
+    const p=clamp(st.ability + st.trend*t + (st.bias[s.key]||0) + noise(), .04, .985)*exam.diff;
+    let d=Math.round(s.max*clamp(p,.02,1));
+    d=clamp(d,0,s.max);
+    const rest=s.max-d;
+    let y=Math.round(rest*(.5+rnd()*.4));
+    y=clamp(y,0,rest);
+    const b=rest-y;
+    subj[s.key]={d,y,b,net:+(d-y/3).toFixed(2)};
+  });
+  const totD=SUBJECTS.reduce((a,s)=>a+subj[s.key].d,0);
+  const totY=SUBJECTS.reduce((a,s)=>a+subj[s.key].y,0);
+  const net=+SUBJECTS.reduce((a,s)=>a+subj[s.key].net,0).toFixed(2);
+  const wnet=SUBJECTS.reduce((a,s)=>a+subj[s.key].net*s.coef,0);
+  const lgs=+clamp(100+400*(wnet/WMAX),100,500).toFixed(3);
+  return {sid:st.id, eid:exam.id, subj, totD, totY, net, lgs};
+}
+
+/* --- üretim + istatistik --- */
+const STUDENTS=makeStudents();
+const RESULTS={};            // eid -> sid -> result
+const EXAM_STATS={};         // eid -> {schoolAvg:{net,lgs,subj:{}}, classAvg:{cls:{...}}, ranked:[sid], rankedByClass:{cls:[sid]}, participation}
+let EXAM_LIST=[...EXAMS];    // içe aktarma sonrası IMPORT_EXAM eklenir
+
+function computeExam(exam,t){
+  const res={};
+  STUDENTS.forEach(st=>{ if(st.absentAt!==exam.id) res[st.id]=genResult(st,exam,t); });
+  RESULTS[exam.id]=res;
+  recomputeStats(exam);
+}
+function recomputeStats(exam){
+  const res=RESULTS[exam.id];
+  const ids=Object.keys(res).map(Number);
+  const ranked=[...ids].sort((a,b)=>res[b].lgs-res[a].lgs);
+  const rankedByClass={};
+  CLASSES.forEach(c=>{ rankedByClass[c]=ranked.filter(id=>STUDENTS[id].cls===c); });
+  const avg=arr=>arr.reduce((a,b)=>a+b,0)/(arr.length||1);
+  const mkAvg=list=>{
+    const o={net:+avg(list.map(id=>res[id].net)).toFixed(2), lgs:+avg(list.map(id=>res[id].lgs)).toFixed(1), subj:{}};
+    SUBJECTS.forEach(s=>o.subj[s.key]=+avg(list.map(id=>res[id].subj[s.key].net)).toFixed(2));
+    return o;
+  };
+  const classAvg={}; CLASSES.forEach(c=>classAvg[c]=mkAvg(rankedByClass[c]));
+  EXAM_STATS[exam.id]={schoolAvg:mkAvg(ids), classAvg, ranked, rankedByClass, participation:ids.length};
+}
+EXAMS.forEach((e,t)=>computeExam(e,t));
+computeExam(IMPORT_EXAM,10);  // veri hazır ama liste dışı; içe aktarınca EXAM_LIST'e girer
+
+/* --- erişimciler --- */
+const lastExam=()=>EXAM_LIST[EXAM_LIST.length-1];
+const stById=id=>STUDENTS[id];
+const stByName=name=>{const f=TRfold(name);return STUDENTS.find(s=>TRfold(s.name)===f)||STUDENTS.find(s=>TRfold(s.name).includes(f));};
+const resOf=(sid,eid)=>RESULTS[eid]?.[sid]||null;
+const examName=e=>e.pub===SCHOOL.name?e.name:`${e.pub} · ${e.name}`;
+
+function ranksOf(sid,eid){
+  const S=EXAM_STATS[eid]; if(!S||!RESULTS[eid][sid]) return null;
+  const st=stById(sid);
+  const cr=S.rankedByClass[st.cls].indexOf(sid)+1;
+  const sr=S.ranked.indexOf(sid)+1;
+  const ex=EXAM_LIST.find(e=>e.id===eid)||IMPORT_EXAM;
+  let gen=null, il=null;
+  if(ex.scope==='genel'){
+    const pct=sr/S.ranked.length;
+    gen=Math.max(sr, Math.round(pct*ex.gk*(0.85+((sid*37)%100)/1000)));
+    il=Math.max(sr, Math.round(pct*1835*(0.9+((sid*53)%80)/1000)));
+  }
+  return {cls:cr, clsN:S.rankedByClass[st.cls].length, sch:sr, schN:S.ranked.length, il, gen, genN:ex.gk||null};
+}
+
+function subjClassRank(sid,eid,key){
+  // dersin netine göre sınıf içi sıra
+  const st=stById(sid); const S2=EXAM_STATS[eid];
+  if(!S2||!RESULTS[eid][sid]) return null;
+  const ids=S2.rankedByClass[st.cls];
+  const sorted=[...ids].sort((a,b)=>RESULTS[eid][b].subj[key].net-RESULTS[eid][a].subj[key].net);
+  return {r:sorted.indexOf(sid)+1, n:ids.length};
+}
+function studentSeries(sid){    // katıldığı sınavlar sırasıyla
+  return EXAM_LIST.filter(e=>RESULTS[e.id][sid]).map(e=>({exam:e, r:RESULTS[e.id][sid], stats:EXAM_STATS[e.id]}));
+}
+function avgNetOf(sid){
+  const ser=studentSeries(sid);
+  return ser.length? +(ser.reduce((a,x)=>a+x.r.net,0)/ser.length).toFixed(2) : 0;
+}
+
+/* --- analiz motoru (AI insight + chat ortak) --- */
+function analyze(sid){
+  const st=stById(sid);
+  const ser=studentSeries(sid);
+  const last=ser[ser.length-1], first=ser[0];
+  const prev=ser.length>1?ser[ser.length-2]:null;
+  const rk=ranksOf(sid,last.exam.id);
+  const n=ser.length;
+  const half=Math.max(1,Math.floor(n/2));
+  const avgN=a=>a.reduce((x,y)=>x+y,0)/(a.length||1);
+  const firstHalf=avgN(ser.slice(0,half).map(x=>x.r.net));
+  const lastHalf=avgN(ser.slice(-half).map(x=>x.r.net));
+  const momentum=+(lastHalf-firstHalf).toFixed(1);
+  const seasonDelta=+(last.r.net-first.r.net).toFixed(1);
+  const lastDelta=prev? +(last.r.net-prev.r.net).toFixed(1):0;
+  // ders bazlı: son 2 deneme ort vs sınıf ort
+  const subjEval=SUBJECTS.map(s=>{
+    const mineLast2=avgN(ser.slice(-2).map(x=>x.r.subj[s.key].net));
+    const clsLast2=avgN(ser.slice(-2).map(x=>x.stats.classAvg[st.cls].subj[s.key]));
+    const mineFirst2=avgN(ser.slice(0,2).map(x=>x.r.subj[s.key].net));
+    return {s, mine:+mineLast2.toFixed(1), cls:+clsLast2.toFixed(1), diff:+(mineLast2-clsLast2).toFixed(1), grow:+(mineLast2-mineFirst2).toFixed(1)};
+  });
+  const sorted=[...subjEval].sort((a,b)=>b.diff-a.diff);
+  const strengths=sorted.filter(x=>x.diff>=0.8).slice(0,2);
+  const weaks=[...sorted].reverse().filter(x=>x.diff<=-0.5).slice(0,2);
+  const bestGrow=[...subjEval].sort((a,b)=>b.grow-a.grow)[0];
+  const nets=ser.map(x=>x.r.net);
+  const mean=avgN(nets);
+  // istikrar: trendden arındırılmış artık sapma (yükselen öğrenci "dalgalı" sayılmasın)
+  const xs=nets.map((_,i)=>i), mx=avgN(xs);
+  const slope=xs.reduce((a,x,i)=>a+(x-mx)*(nets[i]-mean),0)/(xs.reduce((a,x)=>a+(x-mx)*(x-mx),0)||1);
+  const sd=Math.sqrt(avgN(nets.map((v,i)=>{const e=v-(mean+slope*(i-mx));return e*e;})));
+  const consistency= sd<3 ? 'istikrarlı' : sd<5.5 ? 'dalgalı' : 'çok dalgalı';
+  const firstRk=ranksOf(sid,first.exam.id);
+  const rankMove=firstRk&&rk? firstRk.cls-rk.cls : 0;
+  const proj=+clamp(last.r.lgs + momentum*4.3, 100, 500).toFixed(0);
+  return {st,ser,last,first,prev,rk,momentum,seasonDelta,lastDelta,subjEval,strengths,weaks,bestGrow,sd:+sd.toFixed(1),consistency,rankMove,proj,avgNet:+mean.toFixed(1)};
+}
+
+/* =====================================================================
+   GRAFİK MOTORU — el yazımı SVG + hover etkileşimi
+   ===================================================================== */
+const CHARTS={}; let chartSeq=0;   // hover kayıt defteri (chat kartları için kalıcı)
+function chartWrap(svg,reg){
+  const id='ch'+(++chartSeq); CHARTS[id]=reg;
+  return `<div class="chart-hover" data-chart="${id}">${svg}<div class="ch-guide"></div><div class="ch-tip"></div></div>`;
+}
+function bindChart(box){
+  const reg=CHARTS[box.dataset.chart]; if(!reg||box._chBound) return; box._chBound=true;
+  const tip=box.querySelector('.ch-tip'), guide=box.querySelector('.ch-guide');
+  const xs=reg.type==='line'?reg.gx:reg.centers;
+  const move=ev=>{
+    const r=box.getBoundingClientRect(); if(!r.width) return;
+    const vx=(ev.clientX-r.left)/r.width*reg.W;
+    let idx=0,best=1e9;
+    xs.forEach((x,i)=>{const d=Math.abs(x-vx); if(d<best){best=d;idx=i;}});
+    const pct=xs[idx]/reg.W*100;
+    if(reg.type==='line'&&guide){
+      guide.style.display='block'; guide.style.left=pct+'%';
+      guide.style.top=(reg.pt/reg.H*100)+'%'; guide.style.bottom=(reg.pb/reg.H*100)+'%';
+    }
+    let rows='';
+    if(reg.type==='line'){
+      reg.series.forEach(s=>{const p=s.pts[idx];
+        rows+=`<div class="ct-row"><span class="ct-dot" style="background:${s.color}"></span>${esc(s.label)}<b>${p?fmt1(p.v):'—'}</b></div>`;});
+    } else {
+      const it=reg.items[idx];
+      rows+=`<div class="ct-row"><span class="ct-dot" style="background:${it.color||'var(--accent)'}"></span>${esc(reg.aLabel)}<b>${fmt1(it.a)}</b></div>`;
+      if(it.b!==undefined&&it.b!==null) rows+=`<div class="ct-row"><span class="ct-dot" style="background:var(--ink3)"></span>${esc(reg.bLabel||'Karşılaştırma')}<b>${fmt1(it.b)}</b></div>`;
+    }
+    tip.innerHTML=`<div class="ct-title">${esc(reg.titles[idx]??'')}</div>${rows}`;
+    tip.style.display='block';
+    if(pct>60){ tip.style.left='auto'; tip.style.right=(100-pct+1.5)+'%'; }
+    else { tip.style.right='auto'; tip.style.left=(pct+1.5)+'%'; }
+    box.querySelectorAll('.ch-pt').forEach(d=>d.remove());
+    if(reg.type==='line') reg.series.forEach(s=>{const p=s.pts[idx]; if(!p)return;
+      const d=document.createElement('i'); d.className='ch-pt';
+      d.style.left=(p.x/reg.W*100)+'%'; d.style.top=(p.y/reg.H*100)+'%'; d.style.background=s.color;
+      box.appendChild(d);});
+  };
+  box.addEventListener('pointermove',move);
+  box.addEventListener('pointerleave',()=>{tip.style.display='none';if(guide)guide.style.display='none';box.querySelectorAll('.ch-pt').forEach(d=>d.remove());});
+}
+function lineChart(seriesArr,opts={}){
+  // seriesArr: [{label, points:[{x,y}|null], color, dash, area}]
+  const W=opts.w||640, H=opts.h||240, P={t:14,r:16,b:26,l:34};
+  const allY=seriesArr.flatMap(s=>s.points.filter(Boolean).map(p=>p.y));
+  let yMin=opts.yMin!==undefined?opts.yMin:Math.floor(Math.min(...allY)-4);
+  let yMax=opts.yMax!==undefined?opts.yMax:Math.ceil(Math.max(...allY)+4);
+  if(yMax-yMin<8){yMax+=4;yMin-=4;}
+  // veri negatifse taban da negatife inebilsin; aksi halde 0'da (veya opts.floor'da) kes
+  const fl=opts.floor!==undefined?opts.floor:(Math.min(...allY)<0?Math.floor(Math.min(...allY))-2:0);
+  yMin=Math.max(fl,yMin);
+  const N=Math.max(...seriesArr.map(s=>s.points.length));
+  const gx=i=>P.l+(W-P.l-P.r)*(N<2?0.5:i/(N-1));
+  const gy=v=>P.t+(H-P.t-P.b)*(1-(v-yMin)/(yMax-yMin||1));
+  const ticks=4; let grid='',ylab='';
+  for(let i=0;i<=ticks;i++){
+    const v=yMin+(yMax-yMin)*i/ticks, y=gy(v);
+    grid+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y}" y2="${y}" stroke="var(--grid-line)" stroke-width="1"/>`;
+    ylab+=`<text x="${P.l-8}" y="${y+4}" text-anchor="end" font-size="10.5" fill="var(--ink3)" class="num">${fmt0(v)}</text>`;
+  }
+  let xlab='';
+  (opts.xLabels||[]).forEach((lb,i)=>{
+    if(N>6 && i%2===1 && i!==N-1) return;
+    xlab+=`<text x="${gx(i)}" y="${H-7}" text-anchor="middle" font-size="10.5" fill="var(--ink3)">${esc(lb)}</text>`;
+  });
+  let defs='',body='';
+  seriesArr.forEach((s,si)=>{
+    const pts=s.points.map((p,i)=>p?[gx(i),gy(p.y)]:null);
+    let d='',started=false;
+    pts.forEach(pt=>{ if(!pt){started=false;return;} d+=(started?' L':' M')+pt[0].toFixed(1)+' '+pt[1].toFixed(1); started=true; });
+    if(s.area){
+      const solid=pts.filter(Boolean);
+      if(solid.length>1){
+        const aid='ar'+si+(opts.uid||'');
+        defs+=`<linearGradient id="${aid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${s.color}" stop-opacity=".16"/><stop offset="1" stop-color="${s.color}" stop-opacity="0"/></linearGradient>`;
+        body+=`<path class="fade-in" d="${d} L ${solid[solid.length-1][0].toFixed(1)} ${H-P.b} L ${solid[0][0].toFixed(1)} ${H-P.b} Z" fill="url(#${aid})"/>`;
+      }
+    }
+    body+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="${s.width||2.4}" ${s.dash?'stroke-dasharray="5 5"':''} stroke-linecap="round" stroke-linejoin="round" pathLength="1" class="draw-line"/>`;
+    if(!s.noDots){
+      pts.forEach((pt,i)=>{ if(!pt)return; const lastPt=i===pts.length-1;
+        body+=`<circle cx="${pt[0].toFixed(1)}" cy="${pt[1].toFixed(1)}" r="${lastPt?4.5:3}" fill="${lastPt?s.color:'var(--surface)'}" stroke="${s.color}" stroke-width="2" class="fade-in"/>`;
+        if(lastPt&&s.tagLast!==false){
+          const v=s.points[i].y;
+          body+=`<text x="${pt[0].toFixed(1)}" y="${(pt[1]-11).toFixed(1)}" text-anchor="middle" font-size="11.5" font-weight="700" fill="${s.color}" class="fade-in num">${fmt1(v)}</text>`;
+        }
+      });
+    }
+  });
+  const svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="çizgi grafik"><defs>${defs}</defs>${grid}${ylab}${xlab}${body}</svg>`;
+  const reg={type:'line',W,H,pt:P.t,pb:P.b,
+    gx:[...Array(N)].map((_,i)=>gx(i)),
+    titles:(opts.titles||opts.xLabels||[]).slice(),
+    series:seriesArr.map(s=>({label:s.label,color:s.color,
+      pts:s.points.map((p,i)=>p?{x:gx(i),y:gy(p.y),v:p.y}:null)}))};
+  return chartWrap(svg,reg);
+}
+
+function groupBars(items,opts={}){
+  // items: [{label, a, b}]  a=öğrenci/sınıf, b=karşılaştırma
+  const W=opts.w||640,H=opts.h||220,P={t:16,r:8,b:26,l:30};
+  const fmt=opts.fmt||fmt1;
+  const max=opts.max||Math.max(...items.flatMap(x=>[x.a,x.b??0]))*1.15;
+  const bw=(W-P.l-P.r)/items.length;
+  const gy=v=>P.t+(H-P.t-P.b)*(1-v/max);
+  let out=''; const centers=[];
+  for(let i=0;i<=3;i++){const v=max*i/3,y=gy(v);
+    out+=`<line x1="${P.l}" x2="${W-P.r}" y1="${y}" y2="${y}" stroke="var(--grid-line)"/><text x="${P.l-6}" y="${y+4}" text-anchor="end" font-size="10.5" fill="var(--ink3)" class="num">${fmt0(v)}</text>`;}
+  items.forEach((it,i)=>{
+    const cx=P.l+bw*i+bw/2; centers.push(cx);
+    const w1=Math.min(26,bw*.3);
+    const hasB=it.b!==undefined&&it.b!==null;
+    const x1=hasB?cx-w1-2:cx-w1/2;
+    out+=`<rect x="${x1}" y="${gy(it.a)}" width="${w1}" height="${(H-P.b-gy(it.a)).toFixed(1)}" rx="5" fill="${it.color||'var(--accent)'}" class="fade-in"/>`;
+    if(hasB) out+=`<rect x="${cx+2}" y="${gy(it.b)}" width="${w1}" height="${(H-P.b-gy(it.b)).toFixed(1)}" rx="5" fill="var(--ink3)" opacity=".35" class="fade-in"/>`;
+    out+=`<text x="${cx}" y="${H-8}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink2)">${esc(it.label)}</text>`;
+    out+=`<text x="${hasB?x1+w1/2:cx}" y="${gy(it.a)-6}" text-anchor="middle" font-size="10.5" font-weight="700" fill="var(--ink)" class="num fade-in">${fmt(it.a)}</text>`;
+  });
+  const svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="sütun grafik">${out}</svg>`;
+  return chartWrap(svg,{type:'bars',W,H,centers,items:items.map(it=>({...it})),
+    titles:opts.titles||items.map(it=>String(it.label)),
+    aLabel:opts.aLabel||'Değer', bLabel:opts.bLabel, fmt});
+}
+
+function sparkline(vals,opts={}){
+  const W=opts.w||96,H=opts.h||30,pad=3;
+  if(!vals.length) return '';
+  const mn=Math.min(...vals),mx=Math.max(...vals);
+  const gx=i=>pad+(W-2*pad)*(vals.length<2?.5:i/(vals.length-1));
+  const gy=v=>pad+(H-2*pad)*(1-(v-mn)/((mx-mn)||1));
+  const up=vals[vals.length-1]>=vals[0];
+  const col=opts.color||(up?'var(--good)':'var(--bad)');
+  let d='';vals.forEach((v,i)=>d+=(i?' L':'M')+gx(i).toFixed(1)+' '+gy(v).toFixed(1));
+  const lx=gx(vals.length-1),ly=gy(vals[vals.length-1]);
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><path d="${d}" fill="none" stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${lx.toFixed(1)}" cy="${ly.toFixed(1)}" r="2.6" fill="${col}"/></svg>`;
+}
+
+function donut(pct,opts={}){
+  const s=opts.size||56,r=(s-8)/2,c=2*Math.PI*r;
+  return `<svg width="${s}" height="${s}" viewBox="0 0 ${s} ${s}" aria-hidden="true">
+    <circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" stroke="var(--sunken)" stroke-width="6"/>
+    <circle cx="${s/2}" cy="${s/2}" r="${r}" fill="none" stroke="${opts.color||'var(--accent)'}" stroke-width="6" stroke-linecap="round"
+      stroke-dasharray="${(c*pct).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${s/2} ${s/2})" class="fade-in"/>
+    <text x="50%" y="53%" dominant-baseline="middle" text-anchor="middle" font-size="${s*.21}" font-weight="800" fill="var(--ink)" class="num">%${Math.round(pct*100)}</text></svg>`;
+}
+
+/* ---------- ortak bileşenler ---------- */
+const avatar=(st,size=40)=>`<div class="av av-${size} ${avClass(st.id??st.no??3)}">${initials(st.name)}</div>`;
+const deltaTag=(v,suffix='')=>{
+  if(Math.abs(v)<0.05) return `<span class="delta flat">— sabit</span>`;
+  const up=v>0;
+  return `<span class="delta ${up?'up':'down'}">${up?I.up(13):I.down(13)}${up?'+':''}${fmt1(v)}${suffix}</span>`;
+};
+const dybBar=(d,y,b)=>{const t=d+y+b||1;return `<div class="dyb" title="${d} doğru · ${y} yanlış · ${b} boş"><i class="d" style="width:${(d/t*100).toFixed(1)}%"></i><i class="y" style="width:${(y/t*100).toFixed(1)}%"></i><i class="b" style="width:${(b/t*100).toFixed(1)}%"></i></div>`;};
+
+/* =====================================================================
+   DURUM + YÖNLENDİRME
+   ===================================================================== */
+const S={ role:null, route:'dash', params:{}, sideOpen:false,
+  ui:{ dashCls:'all', detailSubj:'total', listCls:'all', listQ:'', entryCls:'6-A', entryExam:9, entrySubj:'mat', imported:false, histCls:null, treeOpen:{} },
+  chat:[], chatBusy:false };
+
+const root=document.getElementById('root');
+const modalRoot=document.getElementById('modal-root');
+
+function go(route,params={}){ S.route=route; S.params=params; S.sideOpen=false; render(); window.scrollTo({top:0}); }
+function setRole(r){ S.role=r; S.chat=[];
+  S.route = r==='teacher'?'dash' : r==='student'?'myhome' : r==='parent'?'phome' : r==='admin'?'adash' : 'login';
+  render(); window.scrollTo({top:0});
+}
+
+function toast(msg,ico=I.check(15)){
+  const t=document.createElement('div'); t.className='toast';
+  t.innerHTML=`<span class="t-ico">${ico}</span>${msg}`;
+  document.getElementById('toasts').appendChild(t);
+  setTimeout(()=>{t.classList.add('out'); setTimeout(()=>t.remove(),350);},2600);
+}
+
+/* =====================================================================
+   GİRİŞ EKRANI
+   ===================================================================== */
+const ROLE_ICO={
+  adm:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 20.4h16.8"/><path d="M5.4 20.4v-8.2M18.6 20.4v-8.2"/><path d="M3.6 12.2 12 6.8l8.4 5.4"/><path d="M12 6.8V3h2.9v2H12"/><path d="M10.3 20.4v-3.3a1.7 1.7 0 0 1 3.4 0v3.3"/><path d="M8 15.4h.01M16 15.4h.01"/></svg>',
+  tch:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.6" y="4.4" width="16.8" height="11.6" rx="1.8"/><path d="m6.9 12.6 3.1-2.9 2.3 2.1 4.7-4.4"/><circle cx="17" cy="7.4" r="1" fill="currentColor" stroke="none"/><path d="M8.7 16 6.9 19.9M15.3 16l1.8 3.9M12 16v2.2"/></svg>',
+  stu:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10.2a5 5 0 0 1 10 0v8A2.2 2.2 0 0 1 14.8 20.4H9.2A2.2 2.2 0 0 1 7 18.2Z"/><path d="M9.8 5.7V5a2.2 2.2 0 0 1 4.4 0v.7"/><path d="M7 13h10"/><path d="M9.3 20.4v-2.5a1.4 1.4 0 0 1 1.4-1.4h2.6a1.4 1.4 0 0 1 1.4 1.4v2.5"/></svg>',
+  par:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4 19 6v5.5c0 4.5-2.8 7.3-7 8.8-4.2-1.5-7-4.3-7-8.8V6Z"/><path d="M12 14.9s-3.2-1.8-3.2-4.1c0-1 .8-1.8 1.8-1.8.6 0 1.1.3 1.4.8.3-.5.8-.8 1.4-.8 1 0 1.8.8 1.8 1.8 0 2.3-3.2 4.1-3.2 4.1Z" fill="currentColor" stroke="none"/></svg>',
+};
+function loginView(){
+  const roles=[
+    {key:'admin',  cls:'adm', tag:'Okul Yönetimi', name:PRINCIPAL.name, sub:`${PRINCIPAL.title} · ${SCHOOL.name}`},
+    {key:'teacher',cls:'tch', tag:'Öğretmen',      name:'Elif Yalçın',  sub:'Matematik · 6-A Rehber Öğretmeni'},
+    {key:'student',cls:'stu', tag:'Öğrenci',       name:HEROES.student.name, sub:'6-A · Okul No 214'},
+    {key:'parent', cls:'par', tag:'Veli',          name:PARENT.name,    sub:`${PARENT.child} — Velisi`},
+  ];
+  const chips=[['TÜR','#FF7A59'],['İNK','#9775F5'],['DİN','#F2B33D'],['İNG','#F06BA8'],['MAT','#4A8DF6'],['FEN','#2BD4C4']];
+  return `<div class="lg">
+    <canvas id="lg-gl" aria-hidden="true"></canvas>
+    <div class="lg-fade" aria-hidden="true"></div>
+    <header class="lg-top" data-rev style="--d:0s">
+      <span class="lg-brand">${logoSVG(26)}<b>Derece</b></span>
+      <span class="lg-pill">${I.info(13)} Demo sürüm · tüm veriler kurgusal</span>
+      <button class="lg-theme" data-act="theme" aria-label="Tema değiştir" title="Aydınlık / karanlık">${isDarkNow()?I.sun(16):I.moon(16)}</button>
+    </header>
+    <main class="lg-wrap">
+      <div class="lg-stage" id="lg-stage" data-rev style="--d:.05s">
+        <div class="lg-ground" aria-hidden="true"></div>
+        ${chips.map(([s,c])=>`<span class="lg-chip"><i style="background:${c}"></i>${s}</span>`).join('')}
+        <div class="lg-mark" id="lg-mark">${logoSVG(116)}</div>
+      </div>
+      <p class="lg-eyebrow" data-rev style="--d:.14s">${SCHOOL.name} · ${SCHOOL.year} LGS yolculuğu</p>
+      <h1 class="lg-h1" data-rev style="--d:.2s">Her deneme,<br><span class="lg-grad">zirveye</span> bir adım.</h1>
+      <p class="lg-tag" data-rev style="--d:.28s">Sonuçlar, gelişim eğrileri ve dereceler — dört farklı gözden, tek platformda.</p>
+      <div class="lg-roles">
+        ${roles.map((r,i)=>`<button class="lgc lgc-${r.cls}" data-act="login" data-role="${r.key}" data-rev style="--d:${(.36+i*.06).toFixed(2)}s">
+          <span class="lgc-ico">${ROLE_ICO[r.cls]}</span>
+          <span class="lgc-tag">${r.tag}</span>
+          <span class="lgc-id"><span class="lgc-name">${esc(r.name)}</span><span class="lgc-sub">${esc(r.sub)}</span></span>
+          <span class="lgc-go">Demo hesabıyla gir ${I.chevR(14)}</span>
+        </button>`).join('')}
+      </div>
+      <div class="lg-feats" data-rev style="--d:.54s">
+        <span class="lg-feat">${I.sparkles(14)} Yapay zekâ rehber raporları</span>
+        <span class="lg-feat">${I.xlsx(14)} Excel'den tek adımda aktarım</span>
+        <span class="lg-feat">${I.chart(14)} Türkiye geneli karşılaştırma</span>
+      </div>
+      <p class="lg-foot" data-rev style="--d:.62s">${SCHOOL.name} · ${SCHOOL.dist} · ${SCHOOL.year} dönemi — LGS deneme takip sistemi</p>
+    </main>
+  </div>`;
+}
+
+/* --- giriş ekranı efekt motoru: WebGL aurora + 3B yörünge + kart tilt --- */
+let LGFX=null;
+function stopLoginFX(){
+  if(!LGFX) return;
+  cancelAnimationFrame(LGFX.raf);
+  LGFX.un.forEach(f=>f());
+  LGFX=null;
+}
+function initLoginFX(){
+  stopLoginFX();
+  const rootEl=document.querySelector('.lg'); if(!rootEl) return;
+  const un=[]; LGFX={raf:0,un};
+  const on=(t,ev,fn,o)=>{t.addEventListener(ev,fn,o); un.push(()=>t.removeEventListener(ev,fn,o));};
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // açılış animasyonu bitince data-rev kalksın ki kart tilt transform'u serbest kalsın
+  rootEl.querySelectorAll('[data-rev]').forEach(el=>{
+    if(reduced){el.removeAttribute('data-rev');return;}
+    el.addEventListener('animationend',()=>el.removeAttribute('data-rev'),{once:true});
+  });
+
+  /* --- WebGL aurora zemin --- */
+  const cv=document.getElementById('lg-gl');
+  let gl=null,uT,uR,uD;
+  try{
+    gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'});
+    if(gl){
+      const VS='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+      const FS=`precision highp float;uniform vec2 R;uniform float T;uniform float D;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+float fb(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*n(p);p=p*2.03+vec2(17.,9.);a*=.52;}return v;}
+void main(){
+vec2 p=(gl_FragCoord.xy-.5*R)/min(R.x,R.y);
+float t=T*.05;
+vec2 q=vec2(fb(p*1.4+vec2(t*.9,.3*t)),fb(p*1.4-vec2(.4*t,t*.8)));
+float f=fb(p*1.6+2.1*q+vec2(-t*.8,t*.5));
+float g=fb(p*2.4-1.7*q+vec2(t*.6,-t*.35));
+float m=fb(p*2.+3.*q+vec2(t*.25,t*.2));
+vec3 base=mix(vec3(.972,.977,.992),vec3(.036,.045,.10),D);
+vec3 c1=mix(vec3(.784,.878,1.),vec3(.08,.30,.92),D);
+vec3 c2=mix(vec3(.898,.862,1.),vec3(.40,.26,.88),D);
+vec3 c3=mix(vec3(.835,.949,.933),vec3(.03,.55,.52),D);
+vec3 col=base;
+col=mix(col,c1,smoothstep(.32,.9,f)*mix(.9,.6,D));
+col=mix(col,c2,smoothstep(.42,.95,g)*mix(.75,.5,D));
+col=mix(col,c3,smoothstep(.5,1.,m)*mix(.55,.35,D));
+vec2 hp=p-vec2(0.,.24);
+col+=mix(vec3(.03,.02,.05),vec3(.09,.14,.30),D)*exp(-dot(hp,hp)*3.2);
+float v=smoothstep(1.6,.4,length(p));
+col=mix(base*mix(1.,.6,D),col,v);
+float sh=h(floor(gl_FragCoord.xy/2.));
+col+=vec3(smoothstep(.9985,1.,sh)*(.5+.5*sin(T*1.3+sh*60.))*D*.6);
+col+=(h(gl_FragCoord.xy+fract(T)*7.)-.5)*.018;
+gl_FragColor=vec4(col,1.);}`;
+      const sh=(ty,src)=>{const s=gl.createShader(ty);gl.shaderSource(s,src);gl.compileShader(s);
+        if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s); return s;};
+      const pr=gl.createProgram();
+      gl.attachShader(pr,sh(gl.VERTEX_SHADER,VS)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,FS));
+      gl.linkProgram(pr);
+      if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) throw gl.getProgramInfoLog(pr);
+      gl.useProgram(pr);
+      const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+      gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+      const loc=gl.getAttribLocation(pr,'p');
+      gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+      uT=gl.getUniformLocation(pr,'T'); uR=gl.getUniformLocation(pr,'R'); uD=gl.getUniformLocation(pr,'D');
+    }
+  }catch(e){ gl=null; }
+  if(!gl){ cv.remove(); rootEl.classList.add('no-gl'); }
+  const dpr=Math.min(window.devicePixelRatio||1,1.6);
+  const size=()=>{ if(!gl) return; cv.width=Math.max(2,rootEl.clientWidth*dpr); cv.height=Math.max(2,rootEl.clientHeight*dpr); gl.viewport(0,0,cv.width,cv.height); };
+  size(); on(window,'resize',size);
+
+  /* --- 3B yörünge + logo paralaks --- */
+  const stage=document.getElementById('lg-stage');
+  const mark=document.getElementById('lg-mark');
+  const chips=[...rootEl.querySelectorAll('.lg-chip')];
+  let tx=0,ty=0,cx=0,cy=0;
+  on(rootEl,'pointermove',e=>{ const r=rootEl.getBoundingClientRect();
+    tx=((e.clientX-r.left)/r.width-.5)*2; ty=((e.clientY-r.top)/r.height-.5)*2; });
+  on(rootEl,'pointerleave',()=>{tx=0;ty=0;});
+
+  /* --- kart tilt + parlama --- */
+  if(!reduced) rootEl.querySelectorAll('.lgc').forEach(card=>{
+    on(card,'pointermove',e=>{ const r=card.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+      card.style.setProperty('--rx',((py-.5)*-9).toFixed(2)+'deg');
+      card.style.setProperty('--ry',((px-.5)*10).toFixed(2)+'deg');
+      card.style.setProperty('--mx',(px*100).toFixed(1)+'%');
+      card.style.setProperty('--my',(py*100).toFixed(1)+'%');
+    });
+    on(card,'pointerleave',()=>{card.style.setProperty('--rx','0deg');card.style.setProperty('--ry','0deg');});
+  });
+
+  const t0=performance.now();
+  const frame=now=>{
+    const T=(now-t0)/1000;
+    if(gl){ gl.uniform1f(uT,reduced?12:T); gl.uniform2f(uR,cv.width,cv.height); gl.uniform1f(uD,isDarkNow()?1:0); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); }
+    if(stage){
+      const R=stage.clientWidth*.46, Rv=stage.clientHeight*.30;
+      const a0=reduced?.6:T*.28;
+      chips.forEach((c,i)=>{
+        const a=a0+i*Math.PI*2/chips.length, z=Math.cos(a);
+        const d=(z+1)/2;                       // 0 arka — 1 ön
+        c.style.transform=`translate(-50%,-50%) translate(${(Math.sin(a)*R).toFixed(1)}px,${(z*Rv).toFixed(1)}px) scale(${(.7+.32*d).toFixed(3)})`;
+        c.style.opacity=(.35+.6*d).toFixed(2);
+        c.style.zIndex=z>0?4:1;
+        c.style.filter=`blur(${((1-d)*1.6).toFixed(2)}px)`;
+      });
+      if(mark){
+        cx+=(tx-cx)*.06; cy+=(ty-cy)*.06;
+        const fy=reduced?0:Math.sin(T*1.4)*7;
+        mark.style.transform=`translate(-50%,-50%) translateY(${fy.toFixed(1)}px) rotateY(${(cx*10).toFixed(2)}deg) rotateX(${(-cy*8).toFixed(2)}deg)`;
+      }
+    }
+    if(!reduced) LGFX.raf=requestAnimationFrame(frame);
+  };
+  LGFX.raf=requestAnimationFrame(frame);
+}
+
+/* =====================================================================
+   UYGULAMA KABUĞU
+   ===================================================================== */
+const NAVS={
+  teacher:[
+    {label:'Genel'},
+    {r:'dash',   ico:'grid',  t:'Genel Bakış'},
+    {r:'students',ico:'users', t:'Öğrenciler'},
+    {r:'exams',  ico:'chart', t:'Denemeler'},
+    {label:'İşlemler'},
+    {r:'entry',  ico:'edit',  t:'Sonuç Girişi'},
+    {r:'chat',   ico:'sparkles', t:'AI Asistan', badge:'AI'},
+  ],
+  student:[
+    {label:'Menü'},
+    {r:'myhome', ico:'home',  t:'Özet'},
+    {r:'myexams',ico:'doc',   t:'Sınavlarım'},
+  ],
+  parent:[
+    {label:'Menü'},
+    {r:'phome',  ico:'home',  t:'Özet'},
+    {r:'pexams', ico:'doc',   t:'Sınav Geçmişi'},
+  ],
+  admin:[
+    {label:'Okul'},
+    {r:'adash',  ico:'grid',  t:'Genel Bakış'},
+    {r:'aclasses',ico:'chart', t:'Sınıf Analizi'},
+    {r:'atree',  ico:'tree',  t:'Okul Yapısı'},
+  ],
+};
+const PERSONAS={
+  teacher:{name:'Elif Yalçın', sub:'Matematik · 6-A Rehber', g:0},
+  student:{name:HEROES.student.name, sub:'6-A · No 214', g:3},
+  parent: {name:PARENT.name, sub:'Veli', g:2},
+  admin:  {name:PRINCIPAL.name, sub:PRINCIPAL.title, g:1},
+};
+const TITLES={dash:'Genel Bakış',students:'Öğrenciler',exams:'Denemeler',examdetail:'Deneme Detayı',entry:'Sonuç Girişi',chat:'AI Asistan',
+  detail:'Öğrenci Profili',myhome:'Özet',myexams:'Sınavlarım',phome:'Özet',pexams:'Sınav Geçmişi',
+  adash:'Genel Bakış',aclasses:'Sınıf Analizi',atree:'Okul Yapısı'};
+
+function isDarkNow(){
+  // açık tema varsayılan; karanlık yalnızca bilinçli seçimle
+  return document.documentElement.dataset.theme==='dark';
+}
+function shell(inner){
+  const p=PERSONAS[S.role];
+  const nav=NAVS[S.role].map(n=> n.label
+    ? `<div class="nav-label">${n.label}</div>`
+    : `<button class="nav-item ${S.route===n.r||(n.r==='students'&&S.route==='detail')||(n.r==='exams'&&S.route==='examdetail')?'on':''}" data-act="nav" data-r="${n.r}">${I[n.ico](18)}${n.t}${n.badge?`<span class="n-badge">${n.badge}</span>`:''}</button>`
+  ).join('');
+  const showSearch=(S.role==='teacher'||S.role==='admin') && S.route!=='chat';
+  return `<div class="shell">
+    ${S.sideOpen?'<div class="scrim" data-act="side"></div>':''}
+    <aside class="sidebar ${S.sideOpen?'open':''}" id="sidebar">
+      <div class="brand"><div class="b-mark">${logoSVG(30)}</div>
+        <div><div class="b-name">Derece</div><div class="b-role">${{teacher:'Öğretmen',student:'Öğrenci',parent:'Veli',admin:'Yönetim'}[S.role]}</div></div>
+      </div>
+      ${nav}
+      <div class="side-foot">
+        <div class="persona"><div class="av av-32 av-g${p.g}">${initials(p.name)}</div>
+          <div><div class="p-name">${esc(p.name)}</div><div class="p-sub">${esc(p.sub)}</div></div></div>
+        <button class="nav-item" data-act="logout">${I.swap(18)}Rol değiştir</button>
+      </div>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn mob-nav-btn" data-act="side" aria-label="Menü">${I.menu(19)}</button>
+        <span class="tb-title">${TITLES[S.route]||''}</span>
+        <span class="tb-crumb sm">· ${SCHOOL.name}</span>
+        <span class="tb-spacer"></span>
+        ${showSearch?`<div class="tb-search"><span class="s-ico">${I.search(15)}</span>
+          <input id="gsearch" placeholder="Öğrenci ara…  (ad, no veya sınıf)" autocomplete="off">
+          <div id="gsearch-drop"></div></div>`:''}
+        <button class="icon-btn" data-act="theme" aria-label="Tema değiştir" title="Aydınlık / karanlık">${isDarkNow()?I.sun(17):I.moon(17)}</button>
+      </header>
+      <div class="content ${S.route==='chat'?'content-chat':''}"><div class="view">${inner}</div></div>
+    </div>
+  </div>`;
+}
+
+/* =====================================================================
+   ÖĞRETMEN — GENEL BAKIŞ
+   ===================================================================== */
+function trendPick(){
+  // en çok yükselen / düşen (son 3 vs ilk 3 net ort)
+  const scored=STUDENTS.map(st=>{
+    const ser=studentSeries(st.id); if(ser.length<4) return null;
+    const a=ser.slice(0,3).reduce((x,y)=>x+y.r.net,0)/3;
+    const b=ser.slice(-3).reduce((x,y)=>x+y.r.net,0)/3;
+    return {st, d:+(b-a).toFixed(1), nets:ser.map(x=>x.r.net)};
+  }).filter(Boolean);
+  scored.sort((a,b)=>b.d-a.d);
+  const le=lastExam(); const topSid=EXAM_STATS[le.id].ranked[0];
+  return {rise:scored[0], fall:scored[scored.length-1], top:{st:stById(topSid), r:RESULTS[le.id][topSid], nets:studentSeries(topSid).map(x=>x.r.net)}};
+}
+
+function teacherDash(){
+  const le=lastExam(), pe=EXAM_LIST[EXAM_LIST.length-2];
+  const ls=EXAM_STATS[le.id], ps=EXAM_STATS[pe.id];
+  const dNet=+(ls.schoolAvg.net-ps.schoolAvg.net).toFixed(1);
+  const part=ls.participation/STUDENTS.length;
+  const cls=S.ui.dashCls;
+  const xl=EXAM_LIST.map(e=>e.date.split(' ')[1]);
+  const series=[
+    {label:'Okul', points:EXAM_LIST.map(e=>({y:EXAM_STATS[e.id].schoolAvg.net})), color:'var(--accent)', area:true},
+  ];
+  if(cls!=='all') series.push({label:cls, points:EXAM_LIST.map(e=>({y:EXAM_STATS[e.id].classAvg[cls].net})), color:'var(--violet)'});
+  const hi=trendPick();
+  const hl=(tag,cls2,st,sub,nets)=>`<button class="hl-card" data-act="open-stu" data-id="${st.id}">
+      ${avatar(st,40)}
+      <div style="flex:1;min-width:0"><div class="hl-tag" style="color:var(--${cls2})">${tag}</div>
+      <div class="hl-name">${esc(st.name)}</div><div class="hl-sub">${sub}</div></div>
+      ${sparkline(nets,{w:76,h:26})}</button>`;
+  return `
+  <div class="page-head"><div><h2>Günaydın, Elif Hanım</h2>
+    <div class="ph-sub">${SCHOOL.year} dönemi · 6. sınıflar · son deneme: ${examName(le)} (${le.date})</div></div>
+    <span class="spacer"></span>
+    <button class="btn outline" data-act="nav" data-r="entry">${I.upload(14)} Sonuç ekle</button>
+    <button class="btn ai" data-act="nav" data-r="chat">${I.sparkles(15)} AI Asistan</button>
+  </div>
+  <div class="strip">
+    <div class="strip-item"><div class="s-lab">Öğrenci</div><div class="s-val" data-count="${STUDENTS.length}">0</div><div class="s-sub">${CLASSES.length} şube · 6. sınıf</div></div>
+    <div class="strip-item"><div class="s-lab">Deneme</div><div class="s-val" data-count="${EXAM_LIST.length}">0</div><div class="s-sub">${EXAM_LIST.filter(e=>e.scope==='genel').length} Türkiye geneli</div></div>
+    <div class="strip-item"><div class="s-lab">Son net ort.</div><div class="s-val" data-count="${ls.schoolAvg.net}" data-dec="1">0</div><div class="s-sub">${deltaTag(dNet,'')} önceki denemeye göre</div></div>
+    <div class="strip-item"><div class="s-lab">LGS puan ort.</div><div class="s-val" data-count="${ls.schoolAvg.lgs}" data-dec="1">0</div><div class="s-sub">100–500 aralığı</div></div>
+    <div class="strip-item"><div class="s-lab">Katılım</div><div class="s-val" data-count="${Math.round(part*100)}">0<span class="unit">%</span></div><div class="s-sub">${ls.participation}/${STUDENTS.length} öğrenci girdi</div></div>
+    <div class="strip-item"><div class="s-lab">En iyi şube</div><div class="s-val">${[...CLASSES].sort((a,b)=>ls.classAvg[b].net-ls.classAvg[a].net)[0]}</div><div class="s-sub">${fmt1(Math.max(...CLASSES.map(c=>ls.classAvg[c].net)))} net ort.</div></div>
+  </div>
+  <div class="grid g-2-1">
+    <div class="card"><div class="card-head"><span class="card-title">Net ortalaması — deneme bazında</span><span class="spacer"></span>
+      <div class="seg">${['all',...CLASSES].map(c=>`<button class="${cls===c?'on':''}" data-act="dash-cls" data-c="${c}">${c==='all'?'Okul':c}</button>`).join('')}</div></div>
+      <div class="chart-box">${lineChart(series,{w:680,h:260,xLabels:xl,uid:'d'})}</div>
+      <div class="legend" style="margin-top:10px"><span class="l-item"><span class="l-dot" style="background:var(--accent)"></span>Okul ortalaması</span>
+      ${cls!=='all'?`<span class="l-item"><span class="l-dot" style="background:var(--violet)"></span>${cls} ortalaması</span>`:''}</div>
+    </div>
+    <div class="card"><div class="card-head"><span class="card-title">Ders ortalamaları</span><span class="pill mut">${le.date}</span></div>
+      ${SUBJECTS.map(s=>{const v=ls.schoolAvg.subj[s.key];return `<div class="hbar-row">
+        <span class="hbar-lab">${s.short}</span>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${(v/s.max*100).toFixed(1)}%"></div></div>
+        <span class="hbar-val">${fmt1(v)} <span class="max">/ ${s.max}</span></span></div>`;}).join('')}
+      <div class="divider"></div>
+      <div class="sm mut">Toplam net ortalaması <b class="num" style="color:var(--ink)">${fmt1(ls.schoolAvg.net)}</b> / ${MAXNET}</div>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid g-3">
+    ${hl('En çok yükselen','good',hi.rise.st,`Son 3 denemede ${fmt1(hi.rise.d)} net artış`,hi.rise.nets)}
+    ${hl('Takip önerilir','bad',hi.fall.st,`Son 3 denemede ${fmt1(Math.abs(hi.fall.d))} net düşüş`,hi.fall.nets)}
+    ${hl('Okul birincisi','accent',hi.top.st,`${examName(le)} · ${fmt1(hi.top.r.net)} net`,hi.top.nets)}
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid g-1-1">
+  <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Son denemeler</span><span class="spacer"></span>
+    <button class="btn ghost sm" data-act="nav" data-r="exams">Tümü ${I.chevR(12)}</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Deneme</th><th>Tarih</th><th class="c">Katılım</th><th class="r">Net ort.</th><th class="r">LGS ort.</th><th></th></tr></thead><tbody>
+    ${[...EXAM_LIST].reverse().slice(0,6).map(e=>{const st=EXAM_STATS[e.id];return `<tr class="rowlink" data-act="open-exam" data-id="${e.id}">
+      <td><div class="t-name"><span class="tn-t">${esc(e.name)}</span>${e.fresh?'<span class="pill good">Yeni</span>':''}</div><div class="tn-s">${esc(e.pub)}</div></td>
+      <td class="mut">${e.date}</td><td class="c">${st.participation}</td>
+      <td class="r w700">${fmt1(st.schoolAvg.net)}</td><td class="r w700">${fmt1(st.schoolAvg.lgs)}</td>
+      <td class="r mut3">${I.chevR(14)}</td></tr>`;}).join('')}
+    </tbody></table></div></div>
+  <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Şube durumu</span><span class="pill mut">${examName(le)}</span></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Şube</th><th>Rehber</th><th class="r">Net ort.</th><th class="r">LGS ort.</th><th class="r">MAT</th><th class="r">TÜR</th><th class="r">FEN</th><th>Birinci</th></tr></thead><tbody>
+    ${[...CLASSES].sort((a,b)=>ls.classAvg[b].net-ls.classAvg[a].net).map(c=>{const ca=ls.classAvg[c];const t=TEACHERS.find(x=>x.cls===c);
+      const top=stById(ls.rankedByClass[c][0]);
+      return `<tr><td><span class="pill acc">${c}</span></td><td class="w600">${t?esc(t.name):'—'}</td>
+      <td class="r w700">${fmt1(ca.net)}</td><td class="r">${fmt1(ca.lgs)}</td>
+      <td class="r">${fmt1(ca.subj.mat)}</td><td class="r">${fmt1(ca.subj.tur)}</td><td class="r">${fmt1(ca.subj.fen)}</td>
+      <td class="sm">${esc(top.name)}</td></tr>`;}).join('')}
+    </tbody></table></div></div>
+  </div>`;
+}
+
+/* =====================================================================
+   ÖĞRETMEN — ÖĞRENCİLER
+   ===================================================================== */
+function studentsView(){
+  const le=lastExam(); const q=TRfold(S.ui.listQ||''); const cf=S.ui.listCls;
+  let list=STUDENTS.filter(st=> (cf==='all'||st.cls===cf) && (!q || TRfold(st.name).includes(q) || String(st.no).includes(q)));
+  list=list.map(st=>{
+    const r=resOf(st.id,le.id); const rk=r?ranksOf(st.id,le.id):null;
+    return {st,r,rk,avg:avgNetOf(st.id),nets:studentSeries(st.id).map(x=>x.r.net)};
+  }).sort((a,b)=>(b.r?b.r.lgs:0)-(a.r?a.r.lgs:0));
+  const withR=list.filter(x=>x.r);
+  const avgLast=withR.length? withR.reduce((a,x)=>a+x.r.net,0)/withR.length : 0;
+  const best=withR.reduce((a,x)=>!a||x.r.net>a.r.net?x:a,null);
+  return `
+  <div class="page-head"><div><h2>Öğrenciler</h2><div class="ph-sub">${list.length} öğrenci listeleniyor · son deneme: ${examName(le)}</div></div>
+    <span class="spacer"></span>
+    <div class="chips">${['all',...CLASSES].map(c=>`<button class="chip ${cf===c?'on':''}" data-act="list-cls" data-c="${c}">${c==='all'?'Tüm sınıflar':c}</button>`).join('')}</div></div>
+  <div class="strip">
+    <div class="strip-item"><div class="s-lab">Listelenen</div><div class="s-val">${list.length}</div><div class="s-sub">${cf==='all'?CLASSES.length+' şube':cf+' şubesi'}</div></div>
+    <div class="strip-item"><div class="s-lab">Son deneme net ort.</div><div class="s-val">${fmt1(avgLast)}</div><div class="s-sub">/ ${MAXNET} net</div></div>
+    <div class="strip-item"><div class="s-lab">En yüksek net</div><div class="s-val">${best?fmt1(best.r.net):'—'}</div><div class="s-sub">${best?esc(best.st.name):''}</div></div>
+    <div class="strip-item"><div class="s-lab">Katılım</div><div class="s-val">${withR.length}<span class="unit">/${list.length}</span></div><div class="s-sub">son denemeye girdi</div></div>
+    <div class="strip-item"><div class="s-lab">Deneme sayısı</div><div class="s-val">${EXAM_LIST.length}</div><div class="s-sub">${SCHOOL.year} dönemi</div></div>
+  </div>
+  <div class="card" style="padding:9px 12px;margin-bottom:12px">
+    <div class="tb-search" style="width:100%"><span class="s-ico">${I.search(14)}</span>
+      <input id="list-q" placeholder="İsim veya okul numarası ile ara…" value="${esc(S.ui.listQ)}" autocomplete="off"></div></div>
+  <div class="card pad-0"><div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>Öğrenci</th><th>Sınıf</th><th class="r">Son net</th><th class="r">Ort. net</th><th class="r">LGS</th><th class="c">Sınıf sırası</th><th class="c">Gelişim</th><th></th></tr></thead>
+    <tbody>${list.map((x,i)=>`<tr class="rowlink" data-act="open-stu" data-id="${x.st.id}">
+      <td class="mut3">${i+1}</td>
+      <td><div class="t-name">${avatar(x.st,32)}<div><div class="tn-t">${esc(x.st.name)}</div><div class="tn-s">No ${x.st.no}</div></div></div></td>
+      <td><span class="pill mut">${x.st.cls}</span></td>
+      <td class="r w700">${x.r?fmt1(x.r.net):'<span class="mut3">girmedi</span>'}</td>
+      <td class="r">${fmt1(x.avg)}</td>
+      <td class="r w700">${x.r?fmt1(x.r.lgs):'—'}</td>
+      <td class="c">${x.rk?`<span class="pill ${x.rk.cls<=3?'acc':'mut'}">${x.rk.cls}. / ${x.rk.clsN}</span>`:'—'}</td>
+      <td class="c">${sparkline(x.nets,{w:80,h:24})}</td>
+      <td class="r"><span style="display:inline-flex;gap:2px;align-items:center"><button class="icon-btn" data-act="insight" data-id="${x.st.id}" title="AI Gelişim Raporu" aria-label="AI raporu" style="color:var(--violet)">${I.sparkles(16)}</button><span class="mut3">${I.chevR(15)}</span></span></td></tr>`).join('')||`<tr><td colspan="9"><div class="empty-state">Aramanla eşleşen öğrenci yok.</div></td></tr>`}
+    </tbody></table></div></div>`;
+}
+
+/* =====================================================================
+   ÖĞRENCİ PROFİLİ (öğretmen + yönetim görünümü)
+   ===================================================================== */
+function studentDetail(sid,forRole='teacher'){
+  const st=stById(sid); if(!st) return '<div class="empty-state">Öğrenci bulunamadı.</div>';
+  const A=analyze(sid);
+  const le=A.last.exam, r=A.last.r, rk=A.rk;
+  const xl=A.ser.map(x=>x.exam.date.split(' ')[1]);
+  const subjKey=S.ui.detailSubj;
+  const mkSeries=()=>{
+    if(subjKey==='total') return [
+      {label:st.name.split(' ')[0], points:A.ser.map(x=>({y:x.r.net})), color:'var(--accent)', area:true},
+      {label:'Sınıf ort.', points:A.ser.map(x=>({y:x.stats.classAvg[st.cls].net})), color:'var(--ink3)', dash:true, noDots:true},
+    ];
+    const s=SUBJECTS.find(z=>z.key===subjKey);
+    return [
+      {label:s.short, points:A.ser.map(x=>({y:x.r.subj[s.key].net})), color:'var(--accent)', area:true},
+      {label:'Sınıf ort.', points:A.ser.map(x=>({y:x.stats.classAvg[st.cls].subj[s.key]})), color:'var(--ink3)', dash:true, noDots:true},
+    ];
+  };
+  const yMax=subjKey==='total'?undefined:SUBJECTS.find(z=>z.key===subjKey).max+1;
+  return `
+  <div class="card"><div class="stu-hero">
+    ${avatar(st,56)}
+    <div class="sh-info"><h2>${esc(st.name)}</h2>
+      <div class="sh-sub">${st.cls} · Okul No ${st.no} · Veli: ${esc(st.parentName)} ${st.absentAt>=0?`· <span style="color:var(--warn)">1 denemeye katılmadı</span>`:''}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        ${A.strengths.map(x=>`<span class="pill good">${I.trendUp(13)} ${x.s.name} güçlü</span>`).join('')}
+        ${A.weaks.map(x=>`<span class="pill warn">${I.warn(13)} ${x.s.name} gelişmeli</span>`).join('')}
+        <span class="pill mut">${A.consistency}</span></div></div>
+    <div class="sh-ranks">
+      <div class="rank-pill hero"><span class="rp-v">${fmt1(r.lgs)}</span><span class="rp-l">LGS Puanı</span></div>
+      <div class="rank-pill"><span class="rp-v">${rk.cls}.</span><span class="rp-l">Sınıf</span></div>
+      <div class="rank-pill"><span class="rp-v">${rk.sch}.</span><span class="rp-l">Okul</span></div>
+      ${rk.gen?`<div class="rank-pill"><span class="rp-v">${fmtInt(rk.il)}.</span><span class="rp-l">İl</span></div>
+      <div class="rank-pill"><span class="rp-v">${fmtInt(rk.gen)}.</span><span class="rp-l">Genel</span></div>`:''}
+    </div></div>
+    <div class="divider"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn ai" data-act="insight" data-id="${st.id}">${I.sparkles(16)} AI Gelişim Raporu</button>
+      ${forRole==='teacher'?`<button class="btn outline" data-act="insight" data-id="${st.id}" data-mode="veli">${I.users(16)} Veli Görüşme Özeti</button>
+      <button class="btn ghost" data-act="ask-ai" data-id="${st.id}">${I.chat(16)} Asistana sor</button>`:''}
+      <span class="spacer" style="flex:1"></span>
+      <span class="sm mut">Son deneme: ${examName(le)} · ${le.date}</span></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid g-2-1">
+    <div class="card"><div class="card-head"><span class="card-title">Net gelişimi</span><span class="spacer"></span>
+      <div class="seg">${[{k:'total',t:'Toplam'},...SUBJECTS.map(s=>({k:s.key,t:s.short}))].map(o=>`<button class="${subjKey===o.k?'on':''}" data-act="detail-subj" data-s="${o.k}" data-id="${st.id}">${o.t}</button>`).join('')}</div></div>
+      <div class="chart-box">${lineChart(mkSeries(),{w:680,h:250,xLabels:xl,uid:'sd',yMax})}</div>
+      <div class="legend" style="margin-top:10px">
+        <span class="l-item"><span class="l-dot" style="background:var(--accent)"></span>${esc(st.name.split(' ')[0])}</span>
+        <span class="l-item"><span class="l-dash"></span>${st.cls} ortalaması</span></div></div>
+    <div class="stack">
+      <div class="card kpi"><div class="k-label">${I.trendUp(15)} Dönem gelişimi</div>
+        <div class="k-value" style="color:${A.seasonDelta>=0?'var(--good)':'var(--bad)'}">${A.seasonDelta>=0?'+':''}${fmt1(A.seasonDelta)}<span class="k-unit">net</span></div>
+        <div class="k-meta">İlk denemeden bugüne · ${A.rankMove>0?`sınıfta ${A.rankMove} sıra yükseldi`:A.rankMove<0?`sınıfta ${-A.rankMove} sıra geriledi`:'sınıf sırası korundu'}</div>
+        ${(()=>{const rs=A.ser.map(x=>ranksOf(sid,x.exam.id).cls);
+          return `<div style="margin-top:10px;display:flex;align-items:center;gap:10px" title="sınıf sırası gelişimi (yukarı = daha iyi)">
+            ${sparkline(rs.map(v=>-v),{w:110,h:26,color:'var(--accent)'})}
+            <span class="xs mut">sınıf sırası ${rs[0]}. → <b>${rs[rs.length-1]}.</b></span></div>`;})()}</div>
+      <div class="card kpi"><div class="k-label">${I.target(15)} Tahmini LGS aralığı</div>
+        <div class="k-value num">${fmt0(Math.max(100,A.proj-8))}–${fmt0(Math.min(500,A.proj+8))}</div>
+        <div class="k-meta">Son eğilime göre AI projeksiyonu</div></div>
+      <div class="card kpi"><div class="k-label">${I.chart(15)} Ortalama net</div>
+        <div class="k-value">${fmt1(A.avgNet)}</div>
+        <div class="k-meta">${A.ser.length} deneme ortalaması · ${deltaTag(A.lastDelta,' son denemede')}</div></div>
+    </div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid g-subj">
+    ${A.subjEval.map(x=>{const sr=r.subj[x.s.key];const scr=subjClassRank(sid,le.id,x.s.key);return `<div class="subj-card">
+      <div class="sc-head"><span class="sc-name">${x.s.name}</span>${deltaTag(x.grow)}</div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div><span class="sc-net">${fmt1(sr.net)}</span><span class="sc-max"> / ${x.s.max} net</span></div>
+        ${scr?`<span class="pill ${scr.r<=3?'acc':'mut'}" title="bu derste sınıf sırası">sınıfta ${scr.r}.</span>`:''}</div>
+      <div style="margin-top:10px">${dybBar(sr.d,sr.y,sr.b)}</div>
+      <div class="sc-meta"><span>${sr.d}D · ${sr.y}Y · ${sr.b}B</span>
+        <span class="${x.diff>=0?'delta up':'delta down'}" style="font-size:11.5px">sınıf ort. ${x.diff>=0?'+':''}${fmt1(x.diff)}</span></div></div>`;}).join('')}
+  </div>
+  <div style="height:12px"></div>
+  <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Deneme geçmişi</span>
+    <span class="pill mut">${A.ser.length} sınav</span></div>
+    <div class="tbl-wrap"><table class="mini-tbl"><thead><tr><th>Deneme</th><th>Tarih</th>
+      ${SUBJECTS.map(s=>`<th class="r">${s.short}</th>`).join('')}
+      <th class="r">Net</th><th class="r">LGS</th><th class="c">Sınıf</th><th class="c">Okul</th></tr></thead><tbody>
+    ${[...A.ser].reverse().map(x=>{const rr=ranksOf(sid,x.exam.id);return `<tr>
+      <td><span class="tn-t" style="font-weight:600">${esc(x.exam.name)}</span><div class="tn-s">${esc(x.exam.pub)}</div></td>
+      <td class="mut">${x.exam.date}</td>
+      ${SUBJECTS.map(s=>`<td class="r">${fmt1(x.r.subj[s.key].net)}</td>`).join('')}
+      <td class="r w700">${fmt1(x.r.net)}</td><td class="r w700">${fmt1(x.r.lgs)}</td>
+      <td class="c"><span class="pill ${rr.cls<=3?'acc':'mut'}">${rr.cls}.</span></td>
+      <td class="c mut">${rr.sch}.</td></tr>`;}).join('')}
+    </tbody></table></div></div>`;
+}
+
+/* =====================================================================
+   ÖĞRETMEN — DENEMELER
+   ===================================================================== */
+function examsView(){
+  const genel=EXAM_LIST.filter(e=>e.scope==='genel');
+  const nets=EXAM_LIST.map(e=>EXAM_STATS[e.id].schoolAvg.net);
+  return `
+  <div class="page-head"><div><h2>Denemeler</h2><div class="ph-sub">${SCHOOL.year} döneminde uygulanan ${EXAM_LIST.length} deneme</div></div>
+    <span class="spacer"></span><button class="btn primary" data-act="nav" data-r="entry">${I.upload(14)} Yeni sonuç ekle</button></div>
+  <div class="strip">
+    <div class="strip-item"><div class="s-lab">Toplam deneme</div><div class="s-val">${EXAM_LIST.length}</div><div class="s-sub">${genel.length} Türkiye geneli · ${EXAM_LIST.length-genel.length} okul içi</div></div>
+    <div class="strip-item"><div class="s-lab">Dönem net ort.</div><div class="s-val">${fmt1(nets.reduce((a,b)=>a+b,0)/nets.length)}</div><div class="s-sub">tüm denemeler</div></div>
+    <div class="strip-item"><div class="s-lab">En iyi deneme</div><div class="s-val">${fmt1(Math.max(...nets))}</div><div class="s-sub">${esc(EXAM_LIST[nets.indexOf(Math.max(...nets))].name)}</div></div>
+    <div class="strip-item"><div class="s-lab">Gidişat</div><div class="s-val">${sparkline(nets,{w:90,h:26})}</div><div class="s-sub">okul net ort. eğilimi</div></div>
+    <div class="strip-item"><div class="s-lab">Ort. katılım</div><div class="s-val">%${Math.round(EXAM_LIST.reduce((a,e)=>a+EXAM_STATS[e.id].participation,0)/EXAM_LIST.length/STUDENTS.length*100)}</div><div class="s-sub">${STUDENTS.length} öğrenci üzerinden</div></div>
+  </div>
+  <div class="card pad-0"><div class="tbl-wrap"><table>
+    <thead><tr><th>Deneme</th><th>Yayınevi</th><th>Tarih</th><th class="c">Kapsam</th><th class="c">Katılım</th>
+      ${SUBJECTS.map(s=>`<th class="r">${s.short}</th>`).join('')}
+      <th class="r">Net ort.</th><th class="r">LGS ort.</th><th>Birinci</th><th></th></tr></thead><tbody>
+    ${[...EXAM_LIST].reverse().map(e=>{const st=EXAM_STATS[e.id];const top=stById(st.ranked[0]);
+      return `<tr class="rowlink" data-act="open-exam" data-id="${e.id}">
+      <td><div class="t-name"><span class="tn-t">${esc(e.name)}</span>${e.fresh?'<span class="pill good">Yeni</span>':''}</div></td>
+      <td class="mut">${esc(e.pub)}</td>
+      <td class="mut">${e.date}</td>
+      <td class="c"><span class="pill ${e.scope==='genel'?'acc':'vio'}">${e.scope==='genel'?'TG':'Okul'}</span></td>
+      <td class="c">${st.participation}${e.gk?`<div class="tn-s">${fmtInt(e.gk)} genel</div>`:''}</td>
+      ${SUBJECTS.map(s=>`<td class="r">${fmt1(st.schoolAvg.subj[s.key])}</td>`).join('')}
+      <td class="r w700">${fmt1(st.schoolAvg.net)}</td><td class="r w700">${fmt1(st.schoolAvg.lgs)}</td>
+      <td class="sm">${esc(top.name)}</td>
+      <td class="r mut3">${I.chevR(14)}</td></tr>`;}).join('')}
+    </tbody></table></div></div>`;
+}
+
+function examDetail(eid){
+  const e=EXAM_LIST.find(x=>x.id===eid); if(!e) return '<div class="empty-state">Deneme bulunamadı.</div>';
+  const st=EXAM_STATS[eid];
+  const cls=S.ui.histCls||'all';
+  const ids=cls==='all'?st.ranked:st.rankedByClass[cls];
+  return `
+  <div class="page-head"><div><h2>${esc(e.name)}</h2><div class="ph-sub">${esc(e.pub)} · ${e.date} · ${st.participation} öğrenci katıldı${e.gk?` · Türkiye genelinde ${fmtInt(e.gk)} öğrenci`:''}</div></div>
+    <span class="spacer"></span>
+    <button class="btn ghost" data-act="nav" data-r="exams">${I.chevR(14)} Tüm denemeler</button></div>
+  <div class="grid g-kpi">
+    <div class="card kpi"><div class="k-label">Net ortalaması</div><div class="k-value">${fmt1(st.schoolAvg.net)}</div><div class="k-meta">okul geneli / ${MAXNET}</div></div>
+    <div class="card kpi"><div class="k-label">LGS puan ort.</div><div class="k-value">${fmt1(st.schoolAvg.lgs)}</div><div class="k-meta">100–500 aralığı</div></div>
+    <div class="card kpi"><div class="k-label">En yüksek net</div><div class="k-value">${fmt1(RESULTS[eid][st.ranked[0]].net)}</div><div class="k-meta">${esc(stById(st.ranked[0]).name)}</div></div>
+    <div class="card kpi"><div class="k-label">Katılım</div><div style="display:flex;align-items:center;gap:14px;margin-top:6px">${donut(st.participation/STUDENTS.length,{size:52})}<span class="sm mut">${st.participation}/${STUDENTS.length}<br>öğrenci</span></div></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid g-1-1">
+    <div class="card"><div class="card-head"><span class="card-title">Sınıf karşılaştırması</span><span class="pill mut">net ort.</span></div>
+      ${groupBars(CLASSES.map(c=>({label:c,a:st.classAvg[c].net})),{w:560,h:210})}</div>
+    <div class="card"><div class="card-head"><span class="card-title">Ders ortalamaları</span></div>
+      ${SUBJECTS.map(s=>{const v=st.schoolAvg.subj[s.key];return `<div class="hbar-row">
+        <span class="hbar-lab">${s.short}</span>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${(v/s.max*100).toFixed(1)}%"></div></div>
+        <span class="hbar-val">${fmt1(v)} <span class="max">/ ${s.max}</span></span></div>`;}).join('')}</div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Sonuç listesi</span><span class="spacer"></span>
+    <div class="seg">${['all',...CLASSES].map(c=>`<button class="${cls===c?'on':''}" data-act="hist-cls" data-c="${c}" data-id="${eid}">${c==='all'?'Okul':c}</button>`).join('')}</div></div>
+    <div class="tbl-wrap"><table class="mini-tbl"><thead><tr><th>Sıra</th><th>Öğrenci</th><th>Sınıf</th>
+      ${SUBJECTS.map(s=>`<th class="r">${s.short}</th>`).join('')}<th class="r">Net</th><th class="r">LGS</th></tr></thead><tbody>
+    ${ids.slice(0,40).map((sid,i)=>{const r=RESULTS[eid][sid];const s2=stById(sid);return `<tr class="rowlink" data-act="open-stu" data-id="${sid}">
+      <td>${i<3?`<span class="pill acc">${i+1}</span>`:`<span class="mut">${i+1}</span>`}</td>
+      <td><div class="t-name">${avatar(s2,32)}<span class="tn-t">${esc(s2.name)}</span></div></td>
+      <td><span class="pill mut">${s2.cls}</span></td>
+      ${SUBJECTS.map(s=>`<td class="r">${fmt1(r.subj[s.key].net)}</td>`).join('')}
+      <td class="r w700">${fmt1(r.net)}</td><td class="r w700">${fmt1(r.lgs)}</td></tr>`;}).join('')}
+    </tbody></table></div>
+    ${ids.length>40?`<div style="padding:10px 16px;border-top:1px solid var(--hairline)" class="sm mut c">İlk 40 gösteriliyor · toplam ${ids.length} öğrenci</div>`:''}</div>`;
+}
+
+/* =====================================================================
+   ÖĞRETMEN — SONUÇ GİRİŞİ
+   ===================================================================== */
+function entryView(){
+  const cls=S.ui.entryCls, eid=S.ui.entryExam, skey=S.ui.entrySubj;
+  const exam=EXAM_LIST.find(e=>e.id===eid)||lastExam();
+  const subj=SUBJECTS.find(s=>s.key===skey);
+  const rows=STUDENTS.filter(s=>s.cls===cls);
+  return `
+  <div class="page-head"><div><h2>Sonuç Girişi</h2><div class="ph-sub">Excel/PDF içe aktar ya da tek tek elle gir — netler otomatik hesaplanır</div></div></div>
+  <div class="grid g-1-1">
+    <button class="card" data-act="wizard" style="text-align:left;cursor:pointer;display:flex;gap:16px;align-items:center">
+      <div style="width:52px;height:52px;border-radius:14px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;flex:none">${I.xlsx(24)}</div>
+      <div style="flex:1"><div class="w700" style="font-size:15.5px">Excel / PDF ile içe aktar <span class="pill acc" style="margin-left:6px">Önerilen</span></div>
+        <div class="sm mut" style="margin-top:3px">Yayınevi sonuç dosyasını sürükle-bırak; sınav, sınıf ve öğrenciler otomatik eşleştirilir.</div></div>
+      <span class="mut3">${I.chevR(18)}</span></button>
+    <div class="card" style="display:flex;gap:16px;align-items:center">
+      <div style="width:52px;height:52px;border-radius:14px;background:var(--violet-soft);color:var(--violet);display:flex;align-items:center;justify-content:center;flex:none">${I.edit(24)}</div>
+      <div style="flex:1"><div class="w700" style="font-size:15.5px">Manuel giriş</div>
+        <div class="sm mut" style="margin-top:3px">Aşağıdaki tablodan doğru/yanlış girin; net anında hesaplanır.</div></div></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="card pad-0">
+    <div class="card-head" style="padding:20px 22px 12px;border-bottom:1px solid var(--hairline);margin-bottom:0">
+      <span class="card-title">Manuel giriş</span><span class="spacer"></span>
+      <div class="field" style="display:flex;align-items:center;gap:8px"><label style="margin:0">Deneme</label>
+        <select class="inp" style="width:auto;padding:7px 10px" data-act-change="entry-exam">
+          ${[...EXAM_LIST].reverse().map(e=>`<option value="${e.id}" ${e.id===eid?'selected':''}>${esc(examName(e))}</option>`).join('')}</select></div>
+      <div class="seg">${CLASSES.map(c=>`<button class="${cls===c?'on':''}" data-act="entry-cls" data-c="${c}">${c}</button>`).join('')}</div>
+      <div class="seg">${SUBJECTS.map(s=>`<button class="${skey===s.key?'on':''}" data-act="entry-subj" data-s="${s.key}">${s.short}</button>`).join('')}</div>
+    </div>
+    <div class="tbl-wrap" style="max-height:52vh;overflow-y:auto"><table class="mini-tbl">
+      <thead><tr><th>No</th><th>Öğrenci</th><th class="c">Doğru</th><th class="c">Yanlış</th><th class="c">Boş</th><th class="r">Net (${subj.short})</th></tr></thead><tbody>
+      ${rows.map(st=>{const r=resOf(st.id,exam.id);const sr=r?r.subj[skey]:null;
+        return `<tr><td class="mut">${st.no}</td>
+        <td><div class="t-name">${avatar(st,32)}<span class="tn-t">${esc(st.name)}</span></div></td>
+        <td class="c"><input class="cell-inp" data-entry="d" data-sid="${st.id}" value="${sr?sr.d:''}" maxlength="2" inputmode="numeric" ${!r?'placeholder="—"':''}></td>
+        <td class="c"><input class="cell-inp" data-entry="y" data-sid="${st.id}" value="${sr?sr.y:''}" maxlength="2" inputmode="numeric"></td>
+        <td class="c mut" id="b-${st.id}">${sr?sr.b:'—'}</td>
+        <td class="r w700 num" id="n-${st.id}">${sr?fmt1(sr.net):'—'}</td></tr>`;}).join('')}
+      </tbody></table></div>
+    <div class="sheet-foot"><span class="sm mut" style="margin-right:auto;align-self:center">Maks. ${subj.max} soru · Net = Doğru − Yanlış/3</span>
+      <button class="btn ghost" data-act="entry-reset">Vazgeç</button>
+      <button class="btn primary" data-act="entry-save">${I.check(15)} Kaydet</button></div>
+  </div>`;
+}
+
+/* ---------- Excel içe aktarma sihirbazı ---------- */
+function openWizard(){
+  modalRoot.innerHTML=`<div class="modal-veil" data-act="modal-close">
+    <div class="sheet wide" data-stop>
+      <div class="sheet-head"><div style="width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center">${I.xlsx(19)}</div>
+        <div><h3>Sonuç dosyası içe aktar</h3><div class="sub">Excel (.xlsx) veya yayınevi PDF çıktısı desteklenir</div></div>
+        <span style="flex:1"></span><button class="icon-btn" data-act="modal-close">${I.x(17)}</button></div>
+      <div class="sheet-body" id="wiz-body">
+        <div class="dropzone" id="dz" data-act="wiz-start" tabindex="0" role="button" aria-label="Dosya seç">
+          <div class="dz-ico">${I.upload(24)}</div>
+          <div class="dz-t">Dosyayı buraya bırak ya da seçmek için tıkla</div>
+          <div class="dz-s">Örn: 6SINIF_TG5.xlsx · yayınevi sonuç listesi · en fazla 20 MB</div></div>
+        <div style="height:14px"></div>
+        <div class="note-card">${I.sparkles(15)} <b>Akıllı eşleştirme:</b> Dosyadaki sınav adı, sınıflar ve öğrenciler okul kayıtlarıyla otomatik eşleştirilir. İsim benzeşmezse okul numarası kullanılır.</div>
+      </div>
+    </div></div>`;
+  const dz=document.getElementById('dz');
+  ['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over');}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over');if(ev==='drop')runWizard();}));
+}
+
+async function runWizard(){
+  const body=document.getElementById('wiz-body'); if(!body) return;
+  const steps=[
+    {t:'6SINIF_TG5.xlsx okunuyor', s:'168 satır · 16 sütun algılandı'},
+    {t:'Sınav tanımlandı', s:'Panorama Yayınları · Türkiye Geneli 5 · 7 Haz 2026'},
+    {t:'Öğrenciler eşleştirildi', s:'140 öğrenci · 5 sınıf · 2 isim okul numarasıyla eşleştirildi'},
+    {t:'Netler ve sıralamalar hesaplandı', s:'Ders netleri, LGS puanı, sınıf/okul dereceleri'},
+  ];
+  const draw=(k)=>{
+    body.innerHTML=`<div class="steps">${steps.map((x,i)=>`
+      <div class="step ${i<k?'done':i===k?'run':'idle'}">
+        <div class="st-dot">${i<k?I.check(14):i===k?`<span class="spin">${I.spinner(14)}</span>`:i+1}</div>
+        <div><div class="st-t">${x.t}${i===k?'…':''}</div>${i<k?`<div class="st-s">${x.s}</div>`:''}</div></div>`).join('')}</div>`;
+  };
+  for(let k=0;k<=steps.length;k++){ draw(k); await sleep(k===0?500:820); }
+  // önizleme
+  const ex=IMPORT_EXAM;
+  const prev=EXAM_STATS[ex.id].ranked.slice(0,8);
+  body.innerHTML=`
+    <div class="ok-box">${I.check(16)} Dosya başarıyla çözümlendi — <b>${examName(ex)}</b> · 140 öğrenci hazır.</div>
+    <div style="height:12px"></div>
+    <div class="warn-box">${I.warn(16)} 2 satırda isim birebir eşleşmedi; okul numarası üzerinden otomatik eşleştirildi (satır 41, 87).</div>
+    <div style="height:12px"></div>
+    <div class="card flat pad-0" style="border:1px solid var(--hairline)"><div class="tbl-wrap"><table class="mini-tbl">
+      <thead><tr><th>Ö.No</th><th>Öğrenci</th><th>Sınıf</th>${SUBJECTS.map(s=>`<th class="r">${s.short}</th>`).join('')}<th class="r">Net</th><th class="r">LGS</th></tr></thead><tbody>
+      ${prev.map(sid=>{const st=stById(sid),r=RESULTS[ex.id][sid];return `<tr><td class="mut">${st.no}</td><td class="w600">${esc(st.name)}</td><td><span class="pill mut">${st.cls}</span></td>
+        ${SUBJECTS.map(s=>`<td class="r">${fmt1(r.subj[s.key].net)}</td>`).join('')}
+        <td class="r w700">${fmt1(r.net)}</td><td class="r w700">${fmt1(r.lgs)}</td></tr>`;}).join('')}
+      </tbody></table></div>
+      <div style="padding:9px 14px;border-top:1px solid var(--hairline)" class="sm mut">İlk 8 satır önizleniyor · toplam 140 satır</div></div>
+    <div style="height:14px"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn ghost" data-act="modal-close">Vazgeç</button>
+      <button class="btn primary lg" data-act="wiz-import">${I.check(15)} 140 öğrenciyi içe aktar</button></div>`;
+}
+
+function doImport(){
+  if(!S.ui.imported){
+    S.ui.imported=true;
+    EXAM_LIST=[...EXAMS, IMPORT_EXAM];
+  }
+  modalRoot.innerHTML='';
+  toast('Türkiye Geneli 5 içe aktarıldı — 140 öğrenci');
+  go('exams');
+}
+
+/* =====================================================================
+   ÖĞRENCİ KATMANI
+   ===================================================================== */
+function myHome(){
+  const sid=stByName(HEROES.student.name).id;
+  const A=analyze(sid); const st=A.st, r=A.last.r, rk=A.rk, le=A.last.exam;
+  const xl=A.ser.map(x=>x.exam.date.split(' ')[1]);
+  return `
+  <div class="page-head"><div><h2>Merhaba Deniz</h2>
+    <div class="ph-sub">${st.cls} · ${SCHOOL.name} · ${SCHOOL.year} dönemi</div></div></div>
+  <div class="card">
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px">
+        <span class="pill acc">${examName(le)} · ${le.date}</span>
+        <div style="font-size:34px;font-weight:800;letter-spacing:-0.03em;margin-top:10px" class="num">${fmt1(r.net)} <span style="font-size:17px;color:var(--ink2);font-weight:600">net</span></div>
+        <div class="sm mut" style="margin-top:4px">${A.lastDelta>=0?`Önceki denemeye göre <b style="color:var(--good)">+${fmt1(A.lastDelta)} net</b> — böyle devam!`:`Önceki denemeye göre ${fmt1(A.lastDelta)} net — bir sonraki daha iyi olacak.`}</div></div>
+      <div class="sh-ranks">
+        <div class="rank-pill hero"><span class="rp-v">${fmt1(r.lgs)}</span><span class="rp-l">LGS Puanı</span></div>
+        <div class="rank-pill"><span class="rp-v">${rk.cls}.</span><span class="rp-l">Sınıfta</span></div>
+        <div class="rank-pill"><span class="rp-v">${rk.sch}.</span><span class="rp-l">Okulda</span></div>
+        ${rk.gen?`<div class="rank-pill"><span class="rp-v">${fmtInt(rk.gen)}.</span><span class="rp-l">Türkiye</span></div>`:''}
+      </div></div></div>
+  <div style="height:12px"></div>
+  <div class="grid g-2-1">
+    <div class="card"><div class="card-head"><span class="card-title">Net gelişimim</span><span class="pill good">${I.trendUp(13)} dönemde ${A.seasonDelta>=0?'+':''}${fmt1(A.seasonDelta)} net</span></div>
+      ${lineChart([
+        {label:'Ben', points:A.ser.map(x=>({y:x.r.net})), color:'var(--accent)', area:true},
+        {label:'Sınıf', points:A.ser.map(x=>({y:x.stats.classAvg[st.cls].net})), color:'var(--ink3)', dash:true, noDots:true},
+      ],{w:680,h:240,xLabels:xl,uid:'me'})}
+      <div class="legend" style="margin-top:10px"><span class="l-item"><span class="l-dot" style="background:var(--accent)"></span>Benim netim</span>
+        <span class="l-item"><span class="l-dash"></span>Sınıf ortalaması</span></div></div>
+    <div class="stack">
+      <div class="card"><div class="card-head"><span class="card-title">Güçlü yönlerim</span></div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+        ${A.strengths.length?A.strengths.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="w600 sm">${x.s.name}</span><span class="pill good">sınıf ort. +${fmt1(x.diff)}</span></div>`).join(''):'<span class="sm mut">Dengeli bir profil — tüm dersler ortalamaya yakın.</span>'}
+        ${A.weaks.map(x=>`<div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="w600 sm">${x.s.name}</span><span class="pill warn">gelişim alanı</span></div>`).join('')}</div></div>
+      <div class="card kpi"><div class="k-label">${I.star(15)} Hedef</div>
+        <div class="k-value num">${fmt0(A.proj+10)}</div>
+        <div class="k-meta">LGS hedef puanın · şu an tahmini ${fmt0(A.proj)}</div>
+        <div style="margin-top:10px" class="hbar-track"><div class="hbar-fill" style="width:${clamp((A.proj/(A.proj+10))*100,5,100).toFixed(0)}%"></div></div></div>
+    </div></div>
+  <div style="height:12px"></div>
+  <div class="grid g-subj">
+    ${A.subjEval.map(x=>{const sr=r.subj[x.s.key];return `<div class="subj-card">
+      <div class="sc-head"><span class="sc-name">${x.s.name}</span>${deltaTag(x.grow)}</div>
+      <div><span class="sc-net">${fmt1(sr.net)}</span><span class="sc-max"> / ${x.s.max}</span></div>
+      <div style="margin-top:10px">${dybBar(sr.d,sr.y,sr.b)}</div>
+      <div class="sc-meta"><span>${sr.d}D · ${sr.y}Y · ${sr.b}B</span></div></div>`;}).join('')}
+  </div>`;
+}
+
+/* ortak sınav geçmişi sayfası (öğrenci + veli) */
+function historyPage(sid,heading,sub){
+  const A=analyze(sid); const st=A.st;
+  const bestIx=A.ser.reduce((bi,x,i)=>x.r.net>A.ser[bi].r.net?i:bi,0);
+  const best=A.ser[bestIx];
+  const lastRk=A.rk;
+  const xl=A.ser.map(x=>x.exam.date.split(' ')[1]);
+  return `
+  <div class="page-head"><div><h2>${heading}</h2><div class="ph-sub">${sub}</div></div></div>
+  <div class="strip">
+    <div class="strip-item"><div class="s-lab">Deneme</div><div class="s-val">${A.ser.length}</div><div class="s-sub">/ ${EXAM_LIST.length} uygulanan</div></div>
+    <div class="strip-item"><div class="s-lab">Ortalama net</div><div class="s-val">${fmt1(A.avgNet)}</div><div class="s-sub">/ ${MAXNET} net</div></div>
+    <div class="strip-item"><div class="s-lab">En iyi net</div><div class="s-val">${fmt1(best.r.net)}</div><div class="s-sub">${esc(best.exam.name)} · ${best.exam.date.split(' ').slice(1).join(' ')}</div></div>
+    <div class="strip-item"><div class="s-lab">Son LGS puanı</div><div class="s-val">${fmt1(A.last.r.lgs)}</div><div class="s-sub">${deltaTag(A.lastDelta,' net')} son denemede</div></div>
+    <div class="strip-item"><div class="s-lab">Sınıf sırası</div><div class="s-val">${lastRk.cls}.<span class="unit">/ ${lastRk.clsN}</span></div><div class="s-sub">${A.rankMove>0?A.rankMove+' sıra yükseldi':A.rankMove<0?(-A.rankMove)+' sıra geriledi':'dönem boyunca korundu'}</div></div>
+    <div class="strip-item"><div class="s-lab">Dönem ivmesi</div><div class="s-val" style="color:${A.momentum>=0?'var(--good)':'var(--bad)'}">${A.momentum>=0?'+':''}${fmt1(A.momentum)}</div><div class="s-sub">son yarı vs ilk yarı</div></div>
+  </div>
+  <div class="grid g-1-1">
+    <div class="card"><div class="card-head"><span class="card-title">Net gelişimi</span>
+      <span class="pill ${A.seasonDelta>=0?'good':'warn'}">dönemde ${A.seasonDelta>=0?'+':''}${fmt1(A.seasonDelta)} net</span></div>
+      ${lineChart([
+        {label:st.name.split(' ')[0], points:A.ser.map(x=>({y:x.r.net})), color:'var(--accent)', area:true},
+        {label:'Sınıf', points:A.ser.map(x=>({y:x.stats.classAvg[st.cls].net})), color:'var(--ink3)', dash:true, noDots:true},
+      ],{w:620,h:200,xLabels:xl,uid:'hist'})}
+      <div class="legend" style="margin-top:8px"><span class="l-item"><span class="l-dot" style="background:var(--accent)"></span>${esc(st.name.split(' ')[0])}</span>
+        <span class="l-item"><span class="l-dash"></span>Sınıf ortalaması</span></div></div>
+    <div class="card"><div class="card-head"><span class="card-title">Ders bazında gelişim</span><span class="pill mut">son 2 deneme vs ilk 2</span></div>
+      ${A.subjEval.map(x=>`<div class="hbar-row" style="grid-template-columns:44px 1fr 120px">
+        <span class="hbar-lab">${x.s.short}</span>
+        <div class="hbar-track"><div class="hbar-fill" style="width:${clamp(x.mine/x.s.max*100,2,100).toFixed(1)}%"></div></div>
+        <span class="hbar-val">${fmt1(x.mine)} <span class="max">/ ${x.s.max}</span> ${x.grow>=0.3?`<span class="delta up">${I.up(11)}${fmt1(x.grow)}</span>`:x.grow<=-0.3?`<span class="delta down">${I.down(11)}${fmt1(Math.abs(x.grow))}</span>`:'<span class="delta flat">—</span>'}</span></div>`).join('')}
+      <div class="divider"></div>
+      <div class="sm mut">En hızlı gelişim: <b style="color:var(--ink)">${A.bestGrow.s.name}</b> (+${fmt1(A.bestGrow.grow)} net)${A.weaks[0]?` · Destek alanı: <b style="color:var(--ink)">${A.weaks[0].s.name}</b>`:''}</div></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Tüm sonuçlar</span><span class="pill mut">${A.ser.length} deneme</span></div>
+    <div class="tbl-wrap"><table class="mini-tbl">
+    <thead><tr><th>Deneme</th><th>Tarih</th>${SUBJECTS.map(s=>`<th class="r">${s.short}</th>`).join('')}<th class="r">D</th><th class="r">Y</th><th class="r">Net</th><th class="r">LGS</th><th class="c">Sınıf</th><th class="c">Okul</th><th class="c">Gidişat</th></tr></thead><tbody>
+    ${[...A.ser].reverse().map((x,i,arr)=>{const rr=ranksOf(sid,x.exam.id);
+      const prev=arr[i+1]; const d=prev? x.r.net-prev.r.net : 0;
+      return `<tr>
+      <td><span class="w600">${esc(x.exam.name)}</span><div class="tn-s">${esc(x.exam.pub)}</div></td>
+      <td class="mut">${x.exam.date}</td>
+      ${SUBJECTS.map(s=>`<td class="r">${fmt1(x.r.subj[s.key].net)}</td>`).join('')}
+      <td class="r mut">${x.r.totD}</td><td class="r mut">${x.r.totY}</td>
+      <td class="r w700">${fmt1(x.r.net)}</td><td class="r w700">${fmt1(x.r.lgs)}</td>
+      <td class="c"><span class="pill ${rr.cls<=3?'acc':'mut'}">${rr.cls}. / ${rr.clsN}</span></td>
+      <td class="c mut">${rr.sch}.</td>
+      <td class="c">${prev?deltaTag(+d.toFixed(1)):'<span class="mut3">ilk</span>'}</td></tr>`;}).join('')}
+    </tbody></table></div></div>`;
+}
+function myExams(){
+  const sid=stByName(HEROES.student.name).id;
+  const A=analyze(sid);
+  return historyPage(sid,'Sınavlarım',`${A.ser.length} deneme · ortalama ${fmt1(A.avgNet)} net · ${SCHOOL.year} dönemi`);
+}
+
+/* =====================================================================
+   VELİ KATMANI
+   ===================================================================== */
+function parentHome(){
+  const sid=stByName(PARENT.child).id;
+  const A=analyze(sid); const st=A.st, r=A.last.r, rk=A.rk, le=A.last.exam;
+  const xl=A.ser.map(x=>x.exam.date.split(' ')[1]);
+  const plain=[];
+  plain.push(`${st.name.split(' ')[0]}, son denemede <b>${fmt1(r.net)} net</b> yaparak sınıfında <b>${rk.cls}.</b> oldu.`);
+  if(A.momentum>1.5) plain.push(`Dönem genelinde <b>belirgin bir yükseliş</b> var: son denemeler, ilk denemelere göre ortalama <b>${fmt1(A.momentum)} net</b> daha iyi.`);
+  else if(A.momentum<-1.5) plain.push(`Son denemelerde <b>${fmt1(Math.abs(A.momentum))} netlik bir gerileme</b> görülüyor; öğretmeniyle görüşmenizi öneririz.`);
+  else plain.push(`Netleri dönem boyunca <b>istikrarlı</b> seyrediyor.`);
+  if(A.strengths[0]) plain.push(`En güçlü olduğu ders <b>${A.strengths[0].s.name}</b> — sınıf ortalamasının ${fmt1(A.strengths[0].diff)} net üzerinde.`);
+  if(A.weaks[0]) plain.push(`<b>${A.weaks[0].s.name}</b> dersinde desteğe ihtiyacı var; sınıf ortalamasının ${fmt1(Math.abs(A.weaks[0].diff))} net altında.`);
+  return `
+  <div class="page-head"><div><h2>Merhaba ${esc(PARENT.name.split(' ')[0])} Bey</h2>
+    <div class="ph-sub">${esc(st.name)} · ${st.cls} · ${SCHOOL.name}</div></div>
+    <span class="spacer"></span>
+    <button class="btn ai" data-act="insight" data-id="${sid}" data-mode="veli-self">${I.sparkles(16)} AI Veli Özeti</button></div>
+  <div class="card"><div class="stu-hero">
+    ${avatar(st,56)}
+    <div class="sh-info"><h2 style="font-size:20px">${esc(st.name)}</h2>
+      <div class="sh-sub">Son deneme: ${examName(le)} · ${le.date}</div></div>
+    <div class="sh-ranks">
+      <div class="rank-pill hero"><span class="rp-v">${fmt1(r.net)}</span><span class="rp-l">Net</span></div>
+      <div class="rank-pill"><span class="rp-v">${fmt1(r.lgs)}</span><span class="rp-l">LGS Puanı</span></div>
+      <div class="rank-pill"><span class="rp-v">${rk.cls}. / ${rk.clsN}</span><span class="rp-l">Sınıf</span></div>
+    </div></div></div>
+  <div style="height:12px"></div>
+  <div class="grid g-2-1">
+    <div class="card"><div class="card-head"><span class="card-title">Gelişim grafiği</span></div>
+      ${lineChart([
+        {label:st.name.split(' ')[0], points:A.ser.map(x=>({y:x.r.net})), color:'var(--accent)', area:true},
+        {label:'Sınıf', points:A.ser.map(x=>({y:x.stats.classAvg[st.cls].net})), color:'var(--ink3)', dash:true, noDots:true},
+      ],{w:680,h:230,xLabels:xl,uid:'p'})}
+      <div class="legend" style="margin-top:10px"><span class="l-item"><span class="l-dot" style="background:var(--accent)"></span>${esc(st.name.split(' ')[0])}</span>
+        <span class="l-item"><span class="l-dash"></span>Sınıf ortalaması</span></div></div>
+    <div class="card"><div class="card-head"><span class="card-title">Öne çıkanlar</span></div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+        ${plain.map(p=>`<li style="display:flex;gap:10px;font-size:14px;line-height:1.55"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none;margin-top:8px"></span><span>${p}</span></li>`).join('')}
+      </ul></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="grid g-1-1">
+    <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Ders karnesi</span><span class="pill mut">son deneme</span></div>
+      <div class="tbl-wrap"><table class="mini-tbl"><thead><tr><th>Ders</th><th class="r">Net</th><th class="r">Sınıf ort.</th><th class="c">Durum</th></tr></thead><tbody>
+      ${A.subjEval.map(x=>{const sr=r.subj[x.s.key];return `<tr><td class="w600">${x.s.name}</td>
+        <td class="r w700">${fmt1(sr.net)} <span class="mut3">/ ${x.s.max}</span></td>
+        <td class="r mut">${fmt1(x.cls)}</td>
+        <td class="c">${x.diff>=0.8?'<span class="pill good">güçlü</span>':x.diff<=-0.5?'<span class="pill warn">gelişmeli</span>':'<span class="pill mut">ortalama</span>'}</td></tr>`;}).join('')}
+      </tbody></table></div></div>
+    <div class="stack">
+      <div class="card"><div class="card-head"><span class="card-title">Öğretmen notu</span><span class="pill mut">Elif Yalçın · 6-A Rehber</span></div>
+        <div class="note-card">"${esc(st.name.split(' ')[0])} bu dönem özellikle matematikte ciddi yol katetti. Türkçe paragraf sorularında hız kazanması için günde 15 dakikalık okuma rutini öneriyorum. Veli görüşme saatlerimde her zaman beklerim."</div></div>
+      <div class="card kpi"><div class="k-label">${I.cal(15)} Deneme katılımı</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:6px">${donut(A.ser.length/EXAM_LIST.length,{size:52,color:'var(--good)'})}
+        <span class="sm mut">${A.ser.length}/${EXAM_LIST.length} denemeye katıldı</span></div></div>
+    </div></div>`;
+}
+
+function parentExams(){
+  const sid=stByName(PARENT.child).id;
+  const A=analyze(sid);
+  return historyPage(sid,'Sınav Geçmişi',`${esc(PARENT.child)} · 6-A · ${A.ser.length} deneme · ${SCHOOL.year} dönemi`);
+}
+
+/* =====================================================================
+   OKUL YÖNETİMİ KATMANI
+   ===================================================================== */
+function adminDash(){
+  const le=lastExam(), pe=EXAM_LIST[EXAM_LIST.length-2];
+  const ls=EXAM_STATS[le.id], ps=EXAM_STATS[pe.id];
+  const dLgs=+(ls.schoolAvg.lgs-ps.schoolAvg.lgs).toFixed(1);
+  const xl=EXAM_LIST.map(e=>e.date.split(' ')[1]);
+  const bestCls=[...CLASSES].sort((a,b)=>ls.classAvg[b].net-ls.classAvg[a].net)[0];
+  return `
+  <div class="page-head"><div><h2>${SCHOOL.name}</h2>
+    <div class="ph-sub">${SCHOOL.dist} · ${SCHOOL.year} dönemi · 6. sınıf deneme takibi</div></div>
+    <span class="spacer"></span><span class="pill vio">${PRINCIPAL.title} görünümü</span></div>
+  <div class="strip">
+    <div class="strip-item"><div class="s-lab">Öğrenci</div><div class="s-val" data-count="${STUDENTS.length}">0</div><div class="s-sub">${CLASSES.length} şube · 6. sınıf</div></div>
+    <div class="strip-item"><div class="s-lab">Öğretmen</div><div class="s-val" data-count="${TEACHERS.length}">0</div><div class="s-sub">6. sınıf kadrosu</div></div>
+    <div class="strip-item"><div class="s-lab">Deneme</div><div class="s-val" data-count="${EXAM_LIST.length}">0</div><div class="s-sub">${SCHOOL.year} dönemi</div></div>
+    <div class="strip-item"><div class="s-lab">LGS puan ort.</div><div class="s-val" data-count="${ls.schoolAvg.lgs}" data-dec="1">0</div><div class="s-sub">${deltaTag(dLgs,'')} önceki denemeye göre</div></div>
+    <div class="strip-item"><div class="s-lab">Net ort.</div><div class="s-val" data-count="${ls.schoolAvg.net}" data-dec="1">0</div><div class="s-sub">${examName(le)}</div></div>
+    <div class="strip-item"><div class="s-lab">En başarılı şube</div><div class="s-val">${bestCls}</div><div class="s-sub">${fmt1(ls.classAvg[bestCls].net)} net ort.</div></div>
+  </div>
+  <div class="grid g-2-1">
+    <div class="card"><div class="card-head"><span class="card-title">Okul geneli LGS puan ortalaması</span><span class="pill mut">deneme bazında</span></div>
+      ${lineChart([{label:'Okul', points:EXAM_LIST.map(e=>({y:EXAM_STATS[e.id].schoolAvg.lgs})), color:'var(--violet)', area:true}],{w:680,h:250,xLabels:xl,uid:'a',floor:100})}</div>
+    <div class="card"><div class="card-head"><span class="card-title">Şube karşılaştırması</span><span class="pill mut">son deneme · net</span></div>
+      ${groupBars(CLASSES.map(c=>({label:c,a:ls.classAvg[c].net,color:c===bestCls?'var(--good)':'var(--accent)'})),{w:520,h:230})}</div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">Şube × ders ısı tablosu</span><span class="pill mut">${examName(le)}</span></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Şube</th><th>Rehber Öğretmen</th>${SUBJECTS.map(s=>`<th class="r">${s.short}</th>`).join('')}<th class="r">Toplam</th></tr></thead><tbody>
+    ${CLASSES.map(c=>{const ca=ls.classAvg[c];const t=TEACHERS.find(x=>x.cls===c);
+      return `<tr><td><span class="pill acc">${c}</span></td><td class="w600">${t?esc(t.name):'—'}</td>
+      ${SUBJECTS.map(s=>{const v=ca.subj[s.key];const ratio=v/s.max;
+        const bg=ratio>=.62?'var(--good-soft)':ratio<=.45?'var(--bad-soft)':'transparent';
+        const col=ratio>=.62?'var(--good)':ratio<=.45?'var(--bad)':'var(--ink)';
+        return `<td class="r"><span class="pill" style="background:${bg};color:${col};font-variant-numeric:tabular-nums">${fmt1(v)}</span></td>`;}).join('')}
+      <td class="r w700">${fmt1(ca.net)}</td></tr>`;}).join('')}
+    </tbody></table></div></div>
+  <div style="height:12px"></div>
+  <div class="grid g-1-1">
+    <div class="card"><div class="card-head"><span class="card-title">Deneme katılımı</span><span class="pill mut">öğrenci sayısı</span></div>
+      ${groupBars(EXAM_LIST.map(e=>({label:e.date.split(' ')[1], a:EXAM_STATS[e.id].participation})),{w:620,h:180,max:STUDENTS.length*1.12})}
+      <div class="sm mut" style="margin-top:6px">Dönem ortalaması %${Math.round(EXAM_LIST.reduce((a,e)=>a+EXAM_STATS[e.id].participation,0)/EXAM_LIST.length/STUDENTS.length*100)} · ${STUDENTS.length} kayıtlı öğrenci</div></div>
+    <div class="card pad-0"><div class="card-head" style="padding:14px 16px 0"><span class="card-title">6. sınıf kadrosu</span><span class="pill mut">${TEACHERS.length} öğretmen</span></div>
+      <div class="tbl-wrap"><table><thead><tr><th>Öğretmen</th><th>Branş</th><th class="c">Şube</th><th class="c">Görev</th></tr></thead><tbody>
+      ${TEACHERS.map((t,i)=>`<tr><td><div class="t-name"><div class="av av-32 av-g${i%6}">${initials(t.name)}</div><span class="tn-t">${esc(t.name)}</span></div></td>
+        <td class="mut">${esc(t.branch)}</td>
+        <td class="c">${t.cls!=='—'?`<span class="pill acc">${t.cls}</span>`:'<span class="mut3">tüm şubeler</span>'}</td>
+        <td class="c">${t.rehber?'<span class="pill vio">Rehber</span>':t.cls!=='—'?'<span class="pill mut">Sınıf öğr.</span>':'<span class="pill mut">Branş</span>'}</td></tr>`).join('')}
+      </tbody></table></div></div>
+  </div>`;
+}
+
+function adminClasses(){
+  const le=lastExam(); const ls=EXAM_STATS[le.id];
+  const xl=EXAM_LIST.map(e=>e.date.split(' ')[1]);
+  const palette=['var(--accent)','var(--violet)','var(--good)','var(--warn)','var(--teal)'];
+  return `
+  <div class="page-head"><div><h2>Sınıf Analizi</h2><div class="ph-sub">Şubelerin dönem boyunca gelişimi</div></div></div>
+  <div class="card"><div class="card-head"><span class="card-title">Net ortalaması — tüm şubeler</span></div>
+    ${lineChart(CLASSES.map((c,i)=>({label:c, points:EXAM_LIST.map(e=>({y:EXAM_STATS[e.id].classAvg[c].net})), color:palette[i], tagLast:false})),{w:900,h:280,xLabels:xl,uid:'c'})}
+    <div class="legend" style="margin-top:10px">${CLASSES.map((c,i)=>`<span class="l-item"><span class="l-dot" style="background:${palette[i]}"></span>${c}</span>`).join('')}</div></div>
+  <div style="height:12px"></div>
+  <div class="grid g-1-1">
+  ${CLASSES.map((c,i)=>{const ca=ls.classAvg[c];const t=TEACHERS.find(x=>x.cls===c);
+    const ids=ls.rankedByClass[c]; const top=stById(ids[0]);
+    return `<div class="card"><div class="card-head">
+      <span class="pill mut"><span style="width:9px;height:9px;border-radius:3px;background:${palette[i]};display:inline-block"></span>${c}</span>
+      <span class="card-title">${t?esc(t.name):''}</span><span class="sm mut">· ${t?esc(t.branch):''}</span>
+      <span class="spacer"></span><span class="pill mut">${ids.length} öğrenci</span></div>
+      <div style="display:flex;gap:26px;flex-wrap:wrap;margin-bottom:12px">
+        <div><div class="xs mut3 w600">NET ORT.</div><div class="w800 num" style="font-size:22px">${fmt1(ca.net)}</div></div>
+        <div><div class="xs mut3 w600">LGS ORT.</div><div class="w800 num" style="font-size:22px">${fmt1(ca.lgs)}</div></div>
+        <div><div class="xs mut3 w600">ŞUBE BİRİNCİSİ</div><div class="w600" style="font-size:14px;margin-top:5px">${esc(top.name)}</div></div></div>
+      ${SUBJECTS.map(s=>{const v=ca.subj[s.key];return `<div class="hbar-row" style="grid-template-columns:42px 1fr 76px;padding:4px 0">
+        <span class="hbar-lab">${s.short}</span>
+        <div class="hbar-track" style="height:6px"><div class="hbar-fill" style="width:${(v/s.max*100).toFixed(1)}%;background:${palette[i]}"></div></div>
+        <span class="hbar-val sm">${fmt1(v)} <span class="max">/ ${s.max}</span></span></div>`;}).join('')}
+    </div>`;}).join('')}
+  </div>`;
+}
+
+function adminTree(){
+  const le=lastExam(); const ls=EXAM_STATS[le.id];
+  const open=S.ui.treeOpen;
+  return `
+  <div class="page-head"><div><h2>Okul Yapısı</h2><div class="ph-sub">Okul → şube → öğretmen → öğrenci → veli hiyerarşisi</div></div></div>
+  <div class="card">
+    <div class="tree">
+      <div class="tree-row" style="cursor:default"><span style="width:34px;height:34px;border-radius:10px;background:var(--violet-soft);color:var(--violet);display:flex;align-items:center;justify-content:center">${I.school(18)}</span>
+        <div><div class="tr-name">${SCHOOL.name}</div><div class="tr-sub">${SCHOOL.dist} · ${PRINCIPAL.name} (${PRINCIPAL.title}) · ${STUDENTS.length} öğrenci</div></div></div>
+      <div class="tree-node">
+      ${CLASSES.map(c=>{const t=TEACHERS.find(x=>x.cls===c); const ids=ls.rankedByClass[c]; const isOpen=!!open[c];
+        return `<div>
+        <div class="tree-row ${isOpen?'open':''}" data-act="tree" data-c="${c}">
+          <span class="tr-ico">${I.chevR(15)}</span>
+          <span class="pill acc">${c}</span>
+          <div><div class="tr-name">${t?esc(t.name):'—'} <span class="mut" style="font-weight:400">· ${t?esc(t.branch):''} ${t&&t.rehber?'· Rehber':''}</span></div>
+          <div class="tr-sub">${ids.length} öğrenci · net ort. ${fmt1(ls.classAvg[c].net)}</div></div></div>
+        ${isOpen?`<div class="tree-node">${ids.map(sid=>{const st2=stById(sid);
+          return `<div class="tree-leaf rowlink" data-act="open-stu" data-id="${sid}" style="cursor:pointer">
+            ${avatar(st2,32)}
+            <div style="flex:1"><div style="font-weight:600;color:var(--ink);font-size:13.5px">${esc(st2.name)} <span class="mut3" style="font-weight:400">· No ${st2.no}</span></div>
+            <div class="xs mut3">Veli: ${esc(st2.parentName)}</div></div>
+            <span class="sm w700 num">${fmt1(RESULTS[le.id][sid]?RESULTS[le.id][sid].net:0)} net</span>
+            <span class="mut3">${I.chevR(14)}</span></div>`;}).join('')}</div>`:''}</div>`;}).join('')}
+      </div>
+      <div class="tree-node" style="margin-top:6px">
+        ${TEACHERS.filter(t=>t.cls==='—').map(t=>`<div class="tree-leaf">
+          <div class="av av-32 av-g5">${initials(t.name)}</div>
+          <div><div style="font-weight:600;color:var(--ink);font-size:13.5px">${esc(t.name)}</div><div class="xs mut3">${esc(t.branch)} · tüm şubeler</div></div></div>`).join('')}
+      </div>
+    </div></div>`;
+}
+
+/* =====================================================================
+   AI GELİŞİM RAPORU (insight sheet)
+   ===================================================================== */
+function insightHTML(A,mode){
+  const st=A.st; const first=st.name.split(' ')[0];
+  const momTxt=A.momentum>1.5?`belirgin bir yükseliş eğiliminde`:A.momentum<-1.5?`son denemelerde gerileme eğiliminde`:`istikrarlı bir seyirde`;
+  const secs=[];
+  if(mode==='veli'||mode==='veli-self'){
+    secs.push({h:'Genel değerlendirme', ico:I.info(14), p:`${st.name}, ${A.ser.length} denemenin tamamı değerlendirildiğinde ${fmt1(A.avgNet)} net ortalamasıyla ${momTxt}. Son denemede ${fmt1(A.last.r.net)} net yaparak sınıfında ${A.rk.cls}., okulda ${A.rk.sch}. sırada yer aldı.${A.rankMove>0?` Dönem başından bu yana sınıf sıralamasında ${A.rankMove} basamak yükseldi.`:''}`});
+    secs.push({h:'Görüşmede vurgulanabilecekler', ico:I.check(14), cls:'good', list:[
+      A.strengths[0]?`${A.strengths[0].s.name} dersinde sınıf ortalamasının ${fmt1(A.strengths[0].diff)} net üzerinde — bu başarıyı takdir edin.`:`Tüm derslerde dengeli bir profil sergiliyor.`,
+      A.bestGrow.grow>0.5?`En hızlı gelişim ${A.bestGrow.s.name} dersinde: dönem başına göre +${fmt1(A.bestGrow.grow)} net.`:`Netleri dönem boyunca korunuyor; düzenli çalışma alışkanlığı yerleşmiş.`,
+      `Deneme katılımı ${A.ser.length}/${EXAM_LIST.length} — sınav disiplini ${A.ser.length===EXAM_LIST.length?'tam':'iyi düzeyde'}.`]});
+    secs.push({h:'Evde destek önerileri', ico:I.star(14), list:[
+      A.weaks[0]?`${A.weaks[0].s.name}: haftada 3 gün, 20 dakikalık konu tekrarı + 10 soru rutini önerilir.`:`Mevcut çalışma düzenini koruması yeterli.`,
+      `Yanlış analizi: her deneme sonrası ${first} ile birlikte yanlış sorulara 15 dakika ayırın.`,
+      `Uyku ve ekran düzeni: sınav haftalarında geç saatlere kalan ekran süresini sınırlandırmak odaklanmayı artırır.`]});
+    secs.push({h:'Not', ico:I.users(14), note:`Bu özet, ${st.name} adlı öğrencinin ${A.ser.length} deneme sonucundaki eğilimlerden otomatik üretilmiştir. Ayrıntılı görüşme için rehber öğretmen Elif Yalçın ile hafta içi 13.00–15.00 arasında randevu oluşturabilirsiniz.`});
+  } else {
+    secs.push({h:'Genel durum', ico:I.info(14), p:`${st.name} (${st.cls}, No ${st.no}) dönem boyunca ${A.ser.length} denemeye katıldı ve ${fmt1(A.avgNet)} net ortalaması yakaladı. Profil ${A.consistency}; ilk yarıya kıyasla son denemelerde ${A.momentum>=0?'+':''}${fmt1(A.momentum)} netlik bir ivme görülüyor. Son deneme LGS karşılığı ${fmt1(A.last.r.lgs)} puan; eğilim korunursa dönem sonu projeksiyonu ${fmt0(Math.max(100,A.proj-8))}–${fmt0(Math.min(500,A.proj+8))} bandında.`});
+    secs.push({h:'Güçlü yönler', ico:I.trendUp(14), cls:'good', list:[
+      ...A.strengths.map(x=>`${x.s.name}: son iki denemede ${fmt1(x.mine)} net ortalama — sınıf ortalamasının ${fmt1(x.diff)} net üzerinde.`),
+      A.bestGrow.grow>0.5?`${A.bestGrow.s.name} dersinde dönem başına göre +${fmt1(A.bestGrow.grow)} netlik gelişim.`:null,
+      A.rankMove>0?`Sınıf sıralamasında dönem başından bu yana ${A.rankMove} basamak yükseliş.`:null].filter(Boolean)});
+    secs.push({h:'Gelişim alanları', ico:I.warn(14), cls:'warn', list:[
+      ...A.weaks.map(x=>`${x.s.name}: son iki denemede ${fmt1(x.mine)} net — sınıf ortalamasının ${fmt1(Math.abs(x.diff))} net altında.`),
+      A.sd>5?`Denemeler arası net farkı yüksek (±${fmt1(A.sd)}); sınav kaygısı veya süre yönetimi incelenebilir.`:null,
+      A.weaks.length===0?`Belirgin zayıf ders yok; hedef, güçlü derslerde tavan neti zorlamak.`:null].filter(Boolean)});
+    secs.push({h:'Öneriler', ico:I.star(14), list:[
+      A.weaks[0]?`${A.weaks[0].s.name} için haftalık 3×20 dk konu tekrarı + hedefli soru çözümü planlanmalı.`:`Genel tekrar programına devam edilmeli.`,
+      `Yanlış/boş analizi: son denemede ${A.last.r.totY} yanlış var; yanlış başına dönüş rutini net kazancını hızlandırır.`,
+      `Bir sonraki denemede hedef: ${fmt1(A.last.r.net+2.5)} net (+2,5).`]});
+    secs.push({h:'Veli görüşmesi notu', ico:I.users(14), note:`Sayın ${st.parentName}; ${first} ${momTxt}. ${A.strengths[0]?A.strengths[0].s.name+' dersindeki başarısı belirgin':'Dersler arası dengesi iyi'}${A.weaks[0]?', '+A.weaks[0].s.name+' dersinde ise evde kısa günlük tekrarlarla destek olabilirsiniz':''}. Sorularınız için rehber öğretmenle görüşme planlayabilirsiniz.`});
+  }
+  return secs;
+}
+
+async function openInsight(sid,mode){
+  const A=analyze(sid);
+  const title=mode==='veli'?'Veli Görüşme Özeti':mode==='veli-self'?'AI Veli Özeti':'AI Gelişim Raporu';
+  modalRoot.innerHTML=`<div class="modal-veil" data-act="modal-close">
+    <div class="sheet" data-stop>
+      <div class="sheet-head">
+        <div style="width:34px;height:34px;border-radius:9px;background:var(--sunken);color:var(--violet);display:flex;align-items:center;justify-content:center">${I.sparkles(18)}</div>
+        <div><h3>${title}</h3><div class="sub">${esc(A.st.name)} · ${A.st.cls} · ${A.ser.length} deneme verisiyle üretildi</div></div>
+        <span style="flex:1"></span><button class="icon-btn" data-act="modal-close">${I.x(17)}</button></div>
+      <div class="sheet-body" id="ins-body"><div class="typing"><i></i><i></i><i></i></div></div>
+      <div class="sheet-foot"><span class="xs mut3" style="margin-right:auto;align-self:center">Demo — rapor kurgusal veriden otomatik üretildi</span>
+        <button class="btn ghost" data-act="modal-close">Kapat</button>
+        <button class="btn primary" data-act="ins-copy">${I.doc(15)} Panoya kopyala</button></div>
+    </div></div>`;
+  const body=document.getElementById('ins-body');
+  const secs=insightHTML(A,mode);
+  // kopyalama, animasyon bitmeden de doğru içeriği alsın
+  window._lastInsight=secs.map(s=>s.h+'\n'+(s.p||s.note||(s.list||[]).map(x=>'• '+x).join('\n'))).join('\n\n');
+  await sleep(700);
+  body.innerHTML='';
+  for(const sec of secs){
+    if(!body.isConnected) return;
+    const div=document.createElement('div');
+    div.className='ins-sec '+(sec.cls||'');
+    div.innerHTML=`<h4>${sec.ico} ${sec.h}</h4>`;
+    body.appendChild(div);
+    if(sec.p){
+      const p=document.createElement('p'); div.appendChild(p);
+      await typeInto(p,sec.p);
+    } else if(sec.list){
+      const ul=document.createElement('ul'); div.appendChild(ul);
+      for(const item of sec.list){
+        const li=document.createElement('li'); const span=document.createElement('span');
+        li.appendChild(span); ul.appendChild(li);
+        await typeInto(span,item,6);
+      }
+    } else if(sec.note){
+      const nd=document.createElement('div'); nd.className='ins-note'; div.appendChild(nd);
+      await typeInto(nd,sec.note);
+    }
+    await sleep(140);
+  }
+  window._lastInsight=secs.map(s=>s.h+'\n'+(s.p||s.note||(s.list||[]).map(x=>'• '+x).join('\n'))).join('\n\n');
+}
+async function typeInto(el,text,cps=4){
+  const caret=document.createElement('span'); caret.className='caret';
+  el.parentNode.appendChild(caret);
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){ el.textContent=text; caret.remove(); return; }
+  for(let i=0;i<text.length;i+=cps){
+    if(!el.isConnected){caret.remove();return;}
+    el.textContent=text.slice(0,i+cps);
+    const sb=el.closest('.sheet-body'); if(sb) sb.scrollTop=sb.scrollHeight;
+    await sleep(12);
+  }
+  el.textContent=text; caret.remove();
+}
+
+/* =====================================================================
+   AI ASİSTAN (yalnızca öğretmen) — mock veriden gerçek yanıt üretir
+   ===================================================================== */
+const CHAT_SUGS=[
+  'Deniz Arslan nasıl gidiyor?',
+  `Kerem Doğan'ın velisi geldi, görüşme özeti hazırla`,
+  '6-B matematik ortalaması nedir?',
+  'Son denemede en çok gelişen 5 öğrenci',
+  `Zeynep Korkmaz ile Deniz Arslan'ı karşılaştır`,
+  'Excel dosyası yükleyeceğim',
+];
+
+function chatView(){
+  const msgs=S.chat.map(m=>renderMsg(m)).join('');
+  return `<div class="chat-wrap">
+    <div class="chat-scroll" id="chat-scroll"><div class="chat-inner">
+      ${S.chat.length?msgs:`
+      <div class="chat-empty">
+        <div class="ce-orb">${logoSVG(44)}</div>
+        <h3>Nasıl yardımcı olabilirim?</h3>
+        <p>Öğrenci sorgula, istatistik iste, veli görüşmesine hazırlan ya da sonuç dosyası yükle.</p>
+        <div class="chat-sugs">${CHAT_SUGS.map(s=>`<button class="chip" data-act="sug" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+      </div>`}
+      <div id="chat-anchor"></div>
+    </div></div>
+    <div class="composer"><div class="composer-inner">
+      <input id="chat-inp" placeholder="Derece AI'ya sor…" autocomplete="off" ${S.chatBusy?'disabled':''}>
+      <button class="send" data-act="chat-send" aria-label="Gönder">${I.send(16)}</button></div>
+      <div class="hint">Demo asistan — yanıtlar kurgusal okul verisinden üretilir</div></div>
+  </div>`;
+}
+function renderMsg(m){
+  if(m.who==='me') return `<div class="msg me"><div class="m-body">${esc(m.text)}</div></div>`;
+  return `<div class="msg bot"><div class="m-av">${logoSVG(26)}</div><div class="m-body"><div class="m-text">${m.html||''}</div>${m.card||''}</div></div>`;
+}
+function chatScrollBottom(){ const sc=document.getElementById('chat-scroll'); if(sc) sc.scrollTop=sc.scrollHeight; }
+
+function stuMiniCard(sid){
+  const A=analyze(sid); const st=A.st, r=A.last.r, rk=A.rk;
+  return `<div class="m-card"><div style="display:flex;gap:12px;align-items:center">
+    ${avatar(st,40)}
+    <div style="flex:1;min-width:0"><div class="w700">${esc(st.name)}</div>
+      <div class="xs mut">${st.cls} · No ${st.no} · son deneme ${fmt1(r.net)} net · sınıf ${rk.cls}.</div></div>
+    ${sparkline(A.ser.map(x=>x.r.net),{w:84,h:28})}</div>
+    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+      <button class="btn sm primary" data-act="open-stu" data-id="${st.id}">Profili aç</button>
+      <button class="btn sm ghost" data-act="insight" data-id="${st.id}">${I.sparkles(13)} AI Rapor</button>
+      <button class="btn sm ghost" data-act="insight" data-id="${st.id}" data-mode="veli">Veli özeti</button></div></div>`;
+}
+
+function aiAnswer(q){
+  const f=TRfold(q);
+  const student=STUDENTS.find(s=>f.includes(TRfold(s.name))) ||
+    STUDENTS.find(s=>{const parts=TRfold(s.name).split(' ');return parts.some(p=>p.length>3&&f.includes(p));});
+  // --- excel / yükleme ---
+  if(/excel|xlsx|dosya|yukle|ice aktar|pdf/.test(f)){
+    return {html:`<p>Tabii — sonuç dosyasını içe aktarma sihirbazını açıyorum. Dosyayı bıraktığında sınav, sınıf ve öğrencileri otomatik eşleştireceğim.</p>`,
+      card:`<div class="m-card"><button class="btn primary" data-act="wizard">${I.upload(15)} İçe aktarma sihirbazını aç</button></div>`};
+  }
+  // --- karşılaştırma (tam ad eşleşmesi öncelikli) ---
+  if(/karsilastir|kiyasla|\bvs\b/.test(f)){
+    const found=STUDENTS.map(s=>{const n=TRfold(s.name);
+        return {s, sc: f.includes(n)?2 : n.split(' ').some(p=>p.length>3&&f.includes(p))?1:0};})
+      .filter(x=>x.sc>0).sort((a,b)=>b.sc-a.sc).slice(0,2).map(x=>x.s);
+    if(found.length===2){
+      const [a,b]=found.map(s=>analyze(s.id));
+      const row=(lab,va,vb,better)=>`<tr><td class="mut sm">${lab}</td><td class="r w700 num" ${better===0?'style="color:var(--good)"':''}>${va}</td><td class="r w700 num" ${better===1?'style="color:var(--good)"':''}>${vb}</td></tr>`;
+      return {html:`<p><b>${esc(a.st.name)}</b> ile <b>${esc(b.st.name)}</b> karşılaştırması (son deneme + dönem geneli):</p>`,
+        card:`<div class="m-card"><div class="tbl-wrap"><table class="mini-tbl">
+        <thead><tr><th></th><th class="r">${esc(a.st.name.split(' ')[0])}</th><th class="r">${esc(b.st.name.split(' ')[0])}</th></tr></thead><tbody>
+        ${row('Son net',fmt1(a.last.r.net),fmt1(b.last.r.net),a.last.r.net>=b.last.r.net?0:1)}
+        ${row('Ortalama net',fmt1(a.avgNet),fmt1(b.avgNet),a.avgNet>=b.avgNet?0:1)}
+        ${row('LGS puanı',fmt1(a.last.r.lgs),fmt1(b.last.r.lgs),a.last.r.lgs>=b.last.r.lgs?0:1)}
+        ${row('Sınıf sırası',a.rk.cls+'.',b.rk.cls+'.',a.rk.cls<=b.rk.cls?0:1)}
+        ${row('Dönem ivmesi',(a.momentum>=0?'+':'')+fmt1(a.momentum),(b.momentum>=0?'+':'')+fmt1(b.momentum),a.momentum>=b.momentum?0:1)}
+        </tbody></table></div>
+        <p class="sm mut" style="margin-top:10px">${esc(a.momentum>b.momentum?a.st.name.split(' ')[0]+' daha güçlü bir ivmede':b.st.name.split(' ')[0]+' daha güçlü bir ivmede')}; puan bazında ${esc(a.last.r.lgs>=b.last.r.lgs?a.st.name.split(' ')[0]:b.st.name.split(' ')[0])} önde.</p></div>`};
+    }
+  }
+  // --- veli görüşmesi ---
+  if(student && /veli|gorusme|toplanti|aile/.test(f)){
+    const A=analyze(student.id);
+    return {html:`<p><b>${esc(student.name)}</b> için veli görüşme özeti hazır. Konuşmada şu üç noktayı öne çıkarmanı öneririm:</p><ul>
+      <li>${A.momentum>=0?`Dönem ivmesi olumlu: son denemeler ilk yarıya göre <b>+${fmt1(A.momentum)} net</b>.`:`Son denemelerde <b>${fmt1(A.momentum)} netlik</b> düşüş var — nedenini birlikte anlamaya çalışın.`}</li>
+      <li>${A.strengths[0]?`<b>${A.strengths[0].s.name}</b> güçlü ders — takdirle başlayın.`:'Dersler arası denge iyi — genel tabloyu övün.'}</li>
+      <li>${A.weaks[0]?`<b>${A.weaks[0].s.name}</b> için evde kısa günlük tekrar isteyin.`:'Belirgin zayıf ders yok; hedefi bir üst bandda tutun.'}</li></ul>
+      <p>Tam raporu açmak için:</p>`,
+      card:stuMiniCard(student.id)};
+  }
+  // --- tek öğrenci durumu (ders dalından ÖNCE: "Öztürk" gibi soyadlar 'tur' kısaltmasına yakalanmasın) ---
+  if(student){
+    const A=analyze(student.id);
+    return {html:`<p><b>${esc(student.name)}</b> ${A.momentum>1.5?'gayet iyi bir ivmede':A.momentum<-1.5?'son denemelerde zorlanıyor':'istikrarlı gidiyor'}. Son denemede <b>${fmt1(A.last.r.net)} net</b> (${fmt1(A.last.r.lgs)} LGS puanı) yaptı; sınıfında <b>${A.rk.cls}.</b>, okulda <b>${A.rk.sch}.</b> sırada.</p><ul>
+      ${A.strengths[0]?`<li>Güçlü: <b>${A.strengths[0].s.name}</b> (sınıf ort. +${fmt1(A.strengths[0].diff)})</li>`:''}
+      ${A.weaks[0]?`<li>Gelişmeli: <b>${A.weaks[0].s.name}</b> (sınıf ort. −${fmt1(Math.abs(A.weaks[0].diff))})</li>`:''}
+      <li>Dönem ivmesi: <b>${A.momentum>=0?'+':''}${fmt1(A.momentum)} net</b> · profil ${A.consistency}</li></ul>`,
+      card:stuMiniCard(student.id)};
+  }
+  // --- ders + sınıf ortalaması (ders kısaltması yalnız ayrı kelime olarak eşleşir) ---
+  const words=f.split(/[^a-zçğıöşü0-9]+/i);
+  const subj=SUBJECTS.find(s=>f.includes(TRfold(s.name))||words.includes(TRfold(s.short)));
+  const cls=CLASSES.find(c=>f.includes(TRfold(c))||f.includes(TRfold(c.replace('-',''))));
+  if(subj||cls){
+    const le=lastExam(); const st2=EXAM_STATS[le.id];
+    if(subj&&cls){
+      const v=st2.classAvg[cls].subj[subj.key]; const sv=st2.schoolAvg.subj[subj.key];
+      return {html:`<p><b>${cls}</b> sınıfının <b>${subj.name}</b> ortalaması son denemede (${esc(examName(le))}) <b>${fmt1(v)} / ${subj.max} net</b>.</p><p>Okul ortalaması ${fmt1(sv)} — ${cls} ${v>=sv?`okulun <b style="color:var(--good)">${fmt1(v-sv)} net üzerinde</b>`:`okulun <b style="color:var(--bad)">${fmt1(sv-v)} net altında</b>`}.</p>`,
+        card:`<div class="m-card">${groupBars(CLASSES.map(c=>({label:c,a:st2.classAvg[c].subj[subj.key],color:c===cls?'var(--accent)':'var(--ink3)'})),{w:420,h:150,max:subj.max})}<div class="xs mut c" style="text-align:center;margin-top:4px">${subj.name} · şube ortalamaları</div></div>`};
+    }
+    if(subj){
+      const sv=st2.schoolAvg.subj[subj.key];
+      return {html:`<p>Okul genelinde <b>${subj.name}</b> ortalaması son denemede <b>${fmt1(sv)} / ${subj.max} net</b>. Şube kırılımı:</p>`,
+        card:`<div class="m-card">${groupBars(CLASSES.map(c=>({label:c,a:st2.classAvg[c].subj[subj.key]})),{w:420,h:150,max:subj.max})}</div>`};
+    }
+    const ca=st2.classAvg[cls];
+    return {html:`<p><b>${cls}</b> son denemede <b>${fmt1(ca.net)} net</b> ortalama yaptı (LGS ort. ${fmt1(ca.lgs)}). En güçlü ders ${SUBJECTS.reduce((a,s)=>ca.subj[s.key]/s.max>ca.subj[a.key]/a.max?s:a,SUBJECTS[0]).name}.</p>`,
+      card:`<div class="m-card">${groupBars(SUBJECTS.map(s=>({label:s.short,a:ca.subj[s.key]})),{w:420,h:150})}<div class="xs mut" style="text-align:center;margin-top:4px">${cls} · ders bazında net ort.</div></div>`};
+  }
+  // --- en çok gelişen ---
+  if(/gelisen|yukselen|ilerleyen|top ?5|en iyi/.test(f)){
+    const scored=STUDENTS.map(st=>{
+      const ser=studentSeries(st.id); if(ser.length<4) return null;
+      const a=ser.slice(0,3).reduce((x,y)=>x+y.r.net,0)/3, b=ser.slice(-3).reduce((x,y)=>x+y.r.net,0)/3;
+      return {st,d:+(b-a).toFixed(1)};}).filter(Boolean).sort((a,b)=>b.d-a.d).slice(0,5);
+    return {html:`<p>Son 3 denemeyi ilk 3 denemeyle kıyasladığımda en çok gelişen 5 öğrenci:</p>`,
+      card:`<div class="m-card"><div class="tbl-wrap"><table class="mini-tbl"><thead><tr><th>#</th><th>Öğrenci</th><th>Sınıf</th><th class="r">Net artışı</th></tr></thead><tbody>
+      ${scored.map((x,i)=>`<tr class="rowlink" data-act="open-stu" data-id="${x.st.id}"><td class="mut">${i+1}</td><td class="w600">${esc(x.st.name)}</td><td><span class="pill mut">${x.st.cls}</span></td><td class="r"><span class="delta up">${I.up(12)}+${fmt1(x.d)}</span></td></tr>`).join('')}
+      </tbody></table></div><p class="xs mut" style="margin-top:8px">Satıra tıklayarak profile gidebilirsin.</p></div>`};
+  }
+  // --- okul geneli ---
+  if(/okul|genel|ortalama|durum|nasil/.test(f)){
+    const le=lastExam(); const st2=EXAM_STATS[le.id];
+    return {html:`<p>Okulun son deneme (${esc(examName(le))}) tablosu: <b>${fmt1(st2.schoolAvg.net)} net</b> ve <b>${fmt1(st2.schoolAvg.lgs)} LGS puanı</b> ortalaması, ${st2.participation}/${STUDENTS.length} katılım.</p>`,
+      card:`<div class="m-card">${groupBars(CLASSES.map(c=>({label:c,a:st2.classAvg[c].net})),{w:420,h:150})}<div class="xs mut" style="text-align:center;margin-top:4px">şube bazında net ort.</div></div>`};
+  }
+  return {html:`<p>Bunu tam çözemedim. Şunları yapabilirim:</p><ul>
+    <li>Öğrenci durumu: <i>"Deniz Arslan nasıl gidiyor?"</i></li>
+    <li>Veli görüşmesi: <i>"Kerem'in velisi geldi, özet hazırla"</i></li>
+    <li>İstatistik: <i>"6-B matematik ortalaması"</i></li>
+    <li>Liste: <i>"en çok gelişen 5 öğrenci"</i></li>
+    <li>İçe aktarma: <i>"excel yükle"</i></li></ul>`};
+}
+
+async function sendChat(text){
+  if(!text.trim()||S.chatBusy) return;
+  S.chat.push({who:'me',text});
+  S.chatBusy=true;
+  render(); chatScrollBottom();
+  const anchor=document.getElementById('chat-anchor');
+  const tmp=document.createElement('div');
+  tmp.className='msg bot';
+  tmp.innerHTML=`<div class="m-av">${logoSVG(26)}</div><div class="m-body"><div class="typing"><i></i><i></i><i></i></div></div>`;
+  anchor.before(tmp); chatScrollBottom();
+  await sleep(750+Math.random()*450);
+  const ans=aiAnswer(text);
+  tmp.remove();
+  S.chat.push({who:'bot',html:ans.html,card:ans.card});
+  S.chatBusy=false;
+  render(); chatScrollBottom();
+  const inp=document.getElementById('chat-inp'); if(inp) inp.focus();
+}
+
+/* =====================================================================
+   GENEL ARAMA (topbar)
+   ===================================================================== */
+function searchDrop(q){
+  const drop=document.getElementById('gsearch-drop'); if(!drop) return;
+  const f=TRfold(q||'');
+  if(f.length<2){ drop.innerHTML=''; return; }
+  const hits=STUDENTS.filter(s=>TRfold(s.name).includes(f)||String(s.no).includes(f)||TRfold(s.cls).includes(f)).slice(0,7);
+  drop.innerHTML=`<div class="s-drop">${hits.length?hits.map(s=>{
+    const le=lastExam(); const r=resOf(s.id,le.id);
+    return `<button class="s-row" data-act="open-stu" data-id="${s.id}">
+      ${avatar(s,32)}<div><div class="sr-name">${esc(s.name)}</div><div class="sr-sub">${s.cls} · No ${s.no}</div></div>
+      <span class="sr-net num">${r?fmt1(r.net)+' net':'—'}</span></button>`;}).join('')
+    :`<div class="s-empty">"${esc(q)}" ile eşleşen öğrenci yok</div>`}</div>`;
+}
+
+/* =====================================================================
+   RENDER + OLAYLAR
+   ===================================================================== */
+function currentView(){
+  switch(S.route){
+    case 'dash': return teacherDash();
+    case 'students': return studentsView();
+    case 'detail': return studentDetail(S.params.id, S.role==='admin'?'admin':'teacher');
+    case 'exams': return examsView();
+    case 'examdetail': return examDetail(S.params.id);
+    case 'entry': return entryView();
+    case 'chat': return chatView();
+    case 'myhome': return myHome();
+    case 'myexams': return myExams();
+    case 'phome': return parentHome();
+    case 'pexams': return parentExams();
+    case 'adash': return adminDash();
+    case 'aclasses': return adminClasses();
+    case 'atree': return adminTree();
+    default: return teacherDash();
+  }
+}
+function render(){
+  root.innerHTML = S.role? shell(currentView()) : loginView();
+  afterRender();
+}
+function afterRender(){
+  // giriş ekranı efektleri (aurora / yörünge / tilt)
+  if(!S.role) initLoginFX(); else stopLoginFX();
+  // sayaç animasyonu
+  const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  root.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseFloat(el.dataset.count), dec=+(el.dataset.dec||0);
+    const unit=el.querySelector('.k-unit,.unit'); const unitHTML=unit?unit.outerHTML:'';
+    const show=v=>{el.innerHTML=(dec?v.toLocaleString('tr-TR',{minimumFractionDigits:dec,maximumFractionDigits:dec}):Math.round(v).toLocaleString('tr-TR'))+unitHTML;};
+    if(reduced){show(target);return;}
+    const t0=performance.now(), dur=700;
+    const tick=t=>{const p=Math.min(1,(t-t0)/dur);show(target*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(tick);};
+    requestAnimationFrame(tick);
+  });
+  // arama
+  const gs=document.getElementById('gsearch');
+  if(gs){ gs.addEventListener('input',()=>searchDrop(gs.value));
+    gs.addEventListener('keydown',e=>{if(e.key==='Escape'){gs.value='';searchDrop('');}}); }
+  // liste araması odak koru
+  const lq=document.getElementById('list-q');
+  if(lq){ lq.addEventListener('input',()=>{S.ui.listQ=lq.value;
+    const wrap=root.querySelector('.view'); if(!wrap) return;
+    // yalnız tabloyu tazele: basitlik için tam render + odak restore
+    const pos=lq.selectionStart; render();
+    const nq=document.getElementById('list-q'); if(nq){nq.focus();nq.setSelectionRange(pos,pos);} }); }
+  // chat input
+  const ci=document.getElementById('chat-inp');
+  if(ci){ ci.addEventListener('keydown',e=>{ if(e.key==='Enter'){ const v=ci.value; ci.value=''; sendChat(v);} }); if(S.route==='chat'&&!S.chatBusy) ci.focus({preventScroll:true}); }
+  // manuel giriş hücreleri
+  root.querySelectorAll('.cell-inp').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const sid=+inp.dataset.sid; const subj=SUBJECTS.find(s=>s.key===S.ui.entrySubj);
+      const row=inp.closest('tr');
+      const dEl=row.querySelector('[data-entry="d"]'), yEl=row.querySelector('[data-entry="y"]');
+      const rawD=parseInt(dEl.value), rawY=parseInt(yEl.value);
+      let d=clamp(rawD||0,0,subj.max), y=clamp(rawY||0,0,subj.max);
+      if(!isNaN(rawD)&&rawD!==d) dEl.value=d;
+      if(!isNaN(rawY)&&rawY!==y) yEl.value=y;
+      if(d+y>subj.max){ y=subj.max-d; yEl.value=y; }
+      const b=subj.max-d-y, net=d-y/3;
+      const bEl=document.getElementById('b-'+sid), nEl=document.getElementById('n-'+sid);
+      if(bEl) bEl.textContent=b;
+      if(nEl) nEl.textContent=fmt1(net);
+    });
+  });
+  // sınav seçici (manuel giriş)
+  root.querySelectorAll('[data-act-change="entry-exam"]').forEach(sel=>{
+    sel.addEventListener('change',()=>{S.ui.entryExam=+sel.value;render();});
+  });
+  chatScrollBottom();
+}
+
+/* --- tıklama delegasyonu --- */
+document.addEventListener('click',e=>{
+  const stop=e.target.closest('[data-stop]');
+  const el=e.target.closest('[data-act]');
+  if(!el){ // dış tıklama: arama açılır listesini kapat
+    if(!e.target.closest('.tb-search')) { const d=document.getElementById('gsearch-drop'); if(d) d.innerHTML=''; }
+    return;
+  }
+  // data-stop içindeki tıklama, dıştaki veil'in data-act'ine yürümesin
+  if(stop && el.contains(stop) && el!==stop) return;
+  const a=el.dataset;
+  const acts={
+    'login':   ()=>setRole(a.role),
+    'logout':  ()=>{S.role=null;render();window.scrollTo({top:0});},
+    'nav':     ()=>go(a.r),
+    'side':    ()=>{S.sideOpen=!S.sideOpen;render();},
+    'theme':   ()=>{document.documentElement.dataset.theme = isDarkNow()?'light':'dark'; render();},
+    'open-stu':()=>{ if(S.role==='student'||S.role==='parent') return;
+       modalRoot.innerHTML=''; go('detail',{id:+a.id}); },
+    'open-exam':()=>{S.ui.histCls='all'; go('examdetail',{id:+a.id});},
+    'dash-cls':()=>{S.ui.dashCls=a.c;render();},
+    'list-cls':()=>{S.ui.listCls=a.c;render();},
+    'hist-cls':()=>{S.ui.histCls=a.c;render();},
+    'detail-subj':()=>{S.ui.detailSubj=a.s;render();},
+    'entry-cls':()=>{S.ui.entryCls=a.c;render();},
+    'entry-subj':()=>{S.ui.entrySubj=a.s;render();},
+    'entry-save':()=>toast('Sonuçlar kaydedildi (demo)'),
+    'entry-reset':()=>render(),
+    'wizard':  ()=>{ if(S.ui.imported){toast('Türkiye Geneli 5 zaten içe aktarıldı',I.info(15));return;} openWizard(); },
+    'wiz-start':()=>runWizard(),
+    'wiz-import':()=>doImport(),
+    'modal-close':()=>{modalRoot.innerHTML='';},
+    'insight': ()=>openInsight(+a.id, a.mode||'full'),
+    'ins-copy':()=>{ if(navigator.clipboard&&window._lastInsight) navigator.clipboard.writeText(window._lastInsight).catch(()=>{});
+       toast('Rapor panoya kopyalandı'); },
+    'ask-ai':  ()=>{ const st=stById(+a.id); go('chat'); sendChat(`${st.name} nasıl gidiyor?`); },
+    'sug':     ()=>sendChat(a.q),
+    'chat-send':()=>{ const ci=document.getElementById('chat-inp'); if(ci){const v=ci.value;ci.value='';sendChat(v);} },
+    'tree':    ()=>{S.ui.treeOpen[a.c]=!S.ui.treeOpen[a.c];render();},
+  };
+  if(acts[a.act]) acts[a.act]();
+});
+
+/* --- başlat --- */
+document.documentElement.lang='tr';   // text-transform:uppercase Türkçe kurallarıyla çalışsın (İ/ı)
+if(!document.documentElement.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
+  document.documentElement.dataset.theme='dark';
+render();
+</script>
+
+</body>
+</html>
