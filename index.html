@@ -192,6 +192,15 @@ button{appearance:none;-webkit-appearance:none}
   .chat-empty p{font-size:13px}
   .chat-sugs .chip{font-size:12px;padding:6px 12px}
 }
+
+/* ============ ÇOKLU SOHBET + BELİRGİN ROL DEĞİŞTİR ============ */
+.chat-top{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--hairline);background:var(--surface);flex:none}
+.ask-row.on{background:var(--sunken)}
+.ask-row.on:hover{background:var(--sunken)}
+.side-foot .nav-item.danger{background:var(--bad-soft);color:var(--bad);font-weight:700;justify-content:center;border:1px solid rgba(222,49,37,.25);padding:9px 10px}
+.side-foot .nav-item.danger:hover{background:var(--bad);color:#fff}
+:root[data-theme="dark"] .side-foot .nav-item.danger{border-color:rgba(240,85,74,.35)}
+@media(max-width:900px){.chat-top{padding-top:10px}}
 @media (prefers-reduced-motion: reduce){
   .lg [data-rev]{animation:none;opacity:1}
   .lg-grad{animation:none}
@@ -1025,14 +1034,14 @@ const dybBar=(d,y,b)=>{const t=d+y+b||1;return `<div class="dyb" title="${d} do�
    ===================================================================== */
 const S={ role:null, route:'dash', params:{}, sideOpen:false,
   ui:{ dashCls:'all', detailSubj:'total', listCls:'all', listQ:'', listPage:1, entryCls:'6-A', entryExam:9, entrySubj:'mat', imported:false, histCls:null, treeOpen:{} },
-  chat:[], chatBusy:false };
+  chats:[], chatId:null, chatBusy:false };
 
 const IS_TOUCH=window.matchMedia('(pointer: coarse)').matches;   // mobil demo: klavye asla açılmaz
 const root=document.getElementById('root');
 const modalRoot=document.getElementById('modal-root');
 
 function go(route,params={}){ S.route=route; S.params=params; S.sideOpen=false; render(); window.scrollTo({top:0}); }
-function setRole(r){ S.role=r; S.chat=[];
+function setRole(r){ S.role=r;
   S.route = r==='teacher'?'dash' : r==='student'?'myhome' : r==='parent'?'phome' : r==='admin'?'adash' : 'login';
   render(); window.scrollTo({top:0});
 }
@@ -2143,11 +2152,53 @@ function openAskSheet(){
         ${CHAT_SUGS.map(q=>`<button class="ask-row" data-act="sug" data-q="${esc(q)}">${I.chat(16)}<span>${esc(q)}</span>${I.chevR(15)}</button>`).join('')}
       </div></div></div>`;
 }
+let chatSeq=100;
+function curChat(){
+  let c=S.chats.find(x=>x.id===S.chatId);
+  if(!c){ c={id:++chatSeq,title:'',msgs:[]}; S.chats.unshift(c); S.chatId=c.id; }
+  return c;
+}
+function newChat(){
+  const c=S.chats.find(x=>x.id===S.chatId);
+  if(c && c.msgs.length===0) return;                 // zaten boş bir sohbetteyiz
+  const n={id:++chatSeq,title:'',msgs:[]}; S.chats.unshift(n); S.chatId=n.id;
+}
+function seedChats(){
+  // geçmiş demo sohbetleri — gerçek veriden üretilir
+  const mk=qs=>{const m=[];qs.forEach(q=>{m.push({who:'me',text:q});const a=aiAnswer(q);m.push({who:'bot',html:a.html,card:a.card});});return m;};
+  S.chats=[
+    {id:++chatSeq,title:'Kerem Doğan — veli görüşmesi',msgs:mk([`Kerem Doğan'ın velisi geldi, görüşme özeti hazırla`])},
+    {id:++chatSeq,title:'6-C Türkçe durumu',msgs:mk(['6-C türkçe ortalaması nedir?'])},
+    {id:++chatSeq,title:'Dönemin yükselen öğrencileri',msgs:mk(['Son denemede en çok gelişen 5 öğrenci'])},
+  ];
+  S.chatId=null; curChat();                           // aktif boş sohbetle başla
+}
+function openHistSheet(){
+  const hist=S.chats.filter(x=>x.msgs.length>0);
+  modalRoot.innerHTML=`<div class="modal-veil" data-act="modal-close">
+    <div class="sheet" data-stop>
+      <div class="sheet-head"><div style="width:34px;height:34px;border-radius:9px;overflow:hidden;flex:none">${logoSVG(34)}</div>
+        <div><h3>Sohbet geçmişi</h3><div class="sub">${hist.length} sohbet · bu oturuma özel</div></div>
+        <span style="flex:1"></span><button class="icon-btn" data-act="modal-close">${I.x(17)}</button></div>
+      <div class="sheet-body" style="padding:8px 10px calc(10px + env(safe-area-inset-bottom))">
+        <button class="ask-row" data-act="chat-new">${I.edit(16)}<span style="font-weight:700">Yeni sohbet başlat</span>${I.chevR(15)}</button>
+        ${hist.map(x=>`<button class="ask-row ${x.id===S.chatId?'on':''}" data-act="chat-open" data-id="${x.id}">${I.chat(16)}
+          <span style="min-width:0;flex:1"><span style="display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(x.title||'Sohbet')}</span>
+          <span class="xs mut3">${Math.ceil(x.msgs.length/2)} soru</span></span>${I.chevR(15)}</button>`).join('')}
+      </div></div></div>`;
+}
 function chatView(){
-  const msgs=S.chat.map(m=>renderMsg(m)).join('');
+  const cc=curChat();
+  const msgs=cc.msgs.map(m=>renderMsg(m)).join('');
+  const histN=S.chats.filter(x=>x.msgs.length>0).length;
   return `<div class="chat-wrap">
+    <div class="chat-top">
+      <button class="btn ghost sm" data-act="chat-new">${I.edit(13)} Yeni sohbet</button>
+      <span class="tb-spacer"></span>
+      <button class="btn ghost sm" data-act="chat-hist">${I.doc(13)} Geçmiş${histN?` (${histN})`:''}</button>
+    </div>
     <div class="chat-scroll" id="chat-scroll"><div class="chat-inner">
-      ${S.chat.length?msgs:`
+      ${cc.msgs.length?msgs:`
       <div class="chat-empty">
         <div class="ce-orb">${logoSVG(44)}</div>
         <h3>Nasıl yardımcı olabilirim?</h3>
@@ -2276,7 +2327,9 @@ function aiAnswer(q){
 
 async function sendChat(text){
   if(!text.trim()||S.chatBusy) return;
-  S.chat.push({who:'me',text});
+  const cc=curChat();
+  cc.msgs.push({who:'me',text});
+  if(!cc.title) cc.title=text.length>44?text.slice(0,44)+'…':text;
   S.chatBusy=true;
   render(); chatScrollBottom();
   const anchor=document.getElementById('chat-anchor');
@@ -2287,7 +2340,7 @@ async function sendChat(text){
   await sleep(750+Math.random()*450);
   const ans=aiAnswer(text);
   tmp.remove();
-  S.chat.push({who:'bot',html:ans.html,card:ans.card});
+  cc.msgs.push({who:'bot',html:ans.html,card:ans.card});
   S.chatBusy=false;
   render(); chatScrollBottom();
   const inp=document.getElementById('chat-inp'); if(inp) inp.focus();
@@ -2467,6 +2520,9 @@ document.addEventListener('click',e=>{
        toast('Rapor panoya kopyalandı'); },
     'ask-ai':  ()=>{ const st=stById(+a.id); go('chat'); sendChat(`${st.name} nasıl gidiyor?`); },
     'sug':     ()=>{ modalRoot.innerHTML=''; if(S.route!=='chat') go('chat'); sendChat(a.q); },
+    'chat-new':()=>{ modalRoot.innerHTML=''; newChat(); if(S.route!=='chat') go('chat'); else render(); },
+    'chat-hist':()=>openHistSheet(),
+    'chat-open':()=>{ S.chatId=+a.id; modalRoot.innerHTML=''; if(S.route!=='chat') go('chat'); else render(); chatScrollBottom(); },
     'chat-send':()=>{ const ci=document.getElementById('chat-inp'); if(!ci) return; const v=ci.value; if(IS_TOUCH&&!v.trim()){ openAskSheet(); return; } ci.value=''; sendChat(v); },
     'tree':    ()=>{S.ui.treeOpen[a.c]=!S.ui.treeOpen[a.c];render();},
   };
@@ -2475,8 +2531,8 @@ document.addEventListener('click',e=>{
 
 /* --- başlat --- */
 document.documentElement.lang='tr';   // text-transform:uppercase Türkçe kurallarıyla çalışsın (İ/ı)
-if(!document.documentElement.dataset.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  document.documentElement.dataset.theme='dark';
+document.documentElement.dataset.theme='light';   // varsayılan her zaman açık tema (kullanıcı isterse değiştirir)
+seedChats();
 render();
 </script>
 
