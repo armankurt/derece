@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title>Derece — Eğitim Platformu</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>
 /* ============ TOKENS — açık tema varsayılan (ChatGPT × Apple) ============ */
 :root{
@@ -1041,7 +1041,7 @@ const root=document.getElementById('root');
 const modalRoot=document.getElementById('modal-root');
 
 function go(route,params={}){ S.route=route; S.params=params; S.sideOpen=false; render(); window.scrollTo({top:0}); }
-function setRole(r){ S.role=r;
+function setRole(r){ S.role=r; S.sideOpen=false;
   S.route = r==='teacher'?'dash' : r==='student'?'myhome' : r==='parent'?'phome' : r==='admin'?'adash' : 'login';
   render(); window.scrollTo({top:0});
 }
@@ -2469,7 +2469,7 @@ document.addEventListener('click',e=>{
   const a=el.dataset;
   const acts={
     'login':   ()=>setRole(a.role),
-    'logout':  ()=>{S.role=null;render();window.scrollTo({top:0});},
+    'logout':  ()=>{S.role=null;S.sideOpen=false;render();window.scrollTo({top:0});},
     'nav':     ()=>go(a.r),
     'side':    ()=>{S.sideOpen=!S.sideOpen;render();},
     'theme':   ()=>{document.documentElement.dataset.theme = isDarkNow()?'light':'dark'; render();},
