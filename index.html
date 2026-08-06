@@ -162,6 +162,36 @@ button{appearance:none;-webkit-appearance:none}
 @media(max-width:600px){
   .s-drop{left:auto;right:0;min-width:288px;max-width:92vw}
 }
+
+/* ============ SORU SEÇİCİ + CHAT MOBİL ============ */
+.ask-row{display:flex;align-items:center;gap:11px;width:100%;text-align:left;padding:14px 12px;border-radius:11px;font-size:14.5px;font-weight:500;color:var(--ink)}
+.ask-row:hover,.ask-row:active{background:var(--sunken)}
+.ask-row svg:first-child{color:var(--accent);flex:none}
+.ask-row svg:last-child{margin-left:auto;color:var(--ink3);flex:none}
+.ask-row span{min-width:0}
+.ask-row+.ask-row{border-top:1px solid var(--hairline)}
+.m-card{max-width:100%}
+.msg .m-text{overflow-wrap:anywhere}
+@media(max-width:600px){
+  .modal-veil{align-items:flex-end;padding:0}
+  .sheet,.sheet.wide{max-width:100%;border-radius:18px 18px 0 0;max-height:86dvh}
+  .sheet-foot{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+}
+@media(max-width:900px){
+  .chat-wrap{position:fixed;left:0;right:0;top:46px;bottom:0;height:auto;background:var(--bg);z-index:30}
+  .composer{padding-bottom:max(14px,env(safe-area-inset-bottom))}
+  .msg.me .m-body{max-width:86%;font-size:14px}
+  .msg.bot .m-body{font-size:14px}
+  .msg .m-av{width:24px;height:24px;border-radius:6px}
+  .msg{gap:9px}
+  .chat-inner{gap:18px}
+  .m-card{padding:11px 12px}
+  .m-card .btn{font-size:11.5px;padding:4px 9px}
+  .chat-empty{padding-top:5vh}
+  .chat-empty h3{font-size:21px}
+  .chat-empty p{font-size:13px}
+  .chat-sugs .chip{font-size:12px;padding:6px 12px}
+}
 @media (prefers-reduced-motion: reduce){
   .lg [data-rev]{animation:none;opacity:1}
   .lg-grad{animation:none}
@@ -2103,6 +2133,16 @@ const CHAT_SUGS=[
   'Excel dosyası yükleyeceğim',
 ];
 
+function openAskSheet(){
+  modalRoot.innerHTML=`<div class="modal-veil" data-act="modal-close">
+    <div class="sheet ask-sheet" data-stop>
+      <div class="sheet-head"><div style="width:34px;height:34px;border-radius:9px;overflow:hidden;flex:none">${logoSVG(34)}</div>
+        <div><h3>Yeni sohbet</h3><div class="sub">Demo asistana sormak için bir soru seç</div></div>
+        <span style="flex:1"></span><button class="icon-btn" data-act="modal-close">${I.x(17)}</button></div>
+      <div class="sheet-body" style="padding:8px 10px calc(10px + env(safe-area-inset-bottom))">
+        ${CHAT_SUGS.map(q=>`<button class="ask-row" data-act="sug" data-q="${esc(q)}">${I.chat(16)}<span>${esc(q)}</span>${I.chevR(15)}</button>`).join('')}
+      </div></div></div>`;
+}
 function chatView(){
   const msgs=S.chat.map(m=>renderMsg(m)).join('');
   return `<div class="chat-wrap">
@@ -2331,7 +2371,7 @@ function afterRender(){
   if(ci){
     if(IS_TOUCH){
       ci.readOnly=true; ci.setAttribute('inputmode','none');
-      ci.addEventListener('click',()=>{ ci.blur(); if(!S.chatBusy){ window._sugIx=((window._sugIx??-1)+1)%CHAT_SUGS.length; sendChat(CHAT_SUGS[window._sugIx]); } });
+      ci.addEventListener('click',()=>{ ci.blur(); if(!S.chatBusy) openAskSheet(); });
     } else {
       ci.addEventListener('keydown',e=>{ if(e.key==='Enter'){ const v=ci.value; ci.value=''; sendChat(v);} });
       if(S.route==='chat'&&!S.chatBusy) ci.focus({preventScroll:true});
@@ -2426,8 +2466,8 @@ document.addEventListener('click',e=>{
     'ins-copy':()=>{ if(navigator.clipboard&&window._lastInsight) navigator.clipboard.writeText(window._lastInsight).catch(()=>{});
        toast('Rapor panoya kopyalandı'); },
     'ask-ai':  ()=>{ const st=stById(+a.id); go('chat'); sendChat(`${st.name} nasıl gidiyor?`); },
-    'sug':     ()=>sendChat(a.q),
-    'chat-send':()=>{ const ci=document.getElementById('chat-inp'); if(ci){const v=ci.value;ci.value='';sendChat(v);} },
+    'sug':     ()=>{ modalRoot.innerHTML=''; if(S.route!=='chat') go('chat'); sendChat(a.q); },
+    'chat-send':()=>{ const ci=document.getElementById('chat-inp'); if(!ci) return; const v=ci.value; if(IS_TOUCH&&!v.trim()){ openAskSheet(); return; } ci.value=''; sendChat(v); },
     'tree':    ()=>{S.ui.treeOpen[a.c]=!S.ui.treeOpen[a.c];render();},
   };
   if(acts[a.act]) acts[a.act]();
